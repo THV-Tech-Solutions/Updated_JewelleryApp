@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "59654702050",
+    "project_id": "balaji-jewellers-d4735",
+    "storage_bucket": "balaji-jewellers-d4735.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:59654702050:android:7a2f1869085dd82b37afbb",
+        "android_client_info": {
+          "package_name": "com.example.jewellery"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBaUYdu2peLV-PwOpCgRT8mUY89yO4Gm1c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:59654702050:android:8635d6e850a283fa37afbb",
+        "android_client_info": {
+          "package_name": "com.thvfuturistai.jewellery"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBaUYdu2peLV-PwOpCgRT8mUY89yO4Gm1c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
