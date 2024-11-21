@@ -4,6 +4,7 @@
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:jewellery/HelperFunctions/Toast.dart';
 import 'package:logger/logger.dart';
 import 'package:photo_view/photo_view.dart';
 // import 'package:photo_view/photo_view_gallery.dart';
@@ -91,6 +92,7 @@ class _CommonScreenState extends State<CommonScreen>
       userPhoneNumber = prefs.getString('userPhoneNumber');
       userName = prefs.getString('userName');
       isMove = prefs.getString('isMove');
+      print("isMove : $isMove");
 
       print("$userPhoneNumber $userName $_Admin");
       if (_Admin == 'Admin' || _Admin == 'Admin2' || _Admin != null) {
@@ -103,6 +105,13 @@ class _CommonScreenState extends State<CommonScreen>
       if (isMove == 'true') {
         setState(() {
           ifMove = true;
+          print("ifMove : $ifMove");
+        });
+      }
+      else{
+        setState(() {
+          ifMove = false;
+          print("ifMove : $ifMove");
         });
       }
     });
@@ -453,162 +462,188 @@ class _CommonScreenState extends State<CommonScreen>
     return imageUrls;
   }
 
- Future<void> showNumberInputDialog(BuildContext context, String name) async {
-  setState(() {
-    isLoading = false;
-  });
+  Future<void> showNumberInputDialog(BuildContext context, String name) async {
+    setState(() {
+      isLoading = false;
+    });
 
-  double? InputNumber;
+    double? InputNumber;
 
-  await showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      // Get the screen width to make it responsive
-      double width = MediaQuery.of(context).size.width;
-      double dialogWidth = width < 600 ? width * 0.85 : width * 0.5; // Adjust width for mobile vs tablet
-      double fontSize = width < 600 ? 18 : 22; // Adjust font size based on device size
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // Get the screen width to make it responsive
+        double width = MediaQuery.of(context).size.width;
+        double dialogWidth = width < 600
+            ? width * 0.85
+            : width * 0.5; // Adjust width for mobile vs tablet
+        double fontSize =
+            width < 600 ? 18 : 22; // Adjust font size based on device size
 
-      return Dialog(
-        backgroundColor: Colors.transparent, // Transparent background for dialog
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20.0), // Rounded corners for the dialog
-        ),
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [
-                Color.fromARGB(255, 0, 0, 0), // Black
-                Color.fromARGB(139, 96, 67, 6), // Dark Gold
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(20.0), // Circular border
+        return Dialog(
+          backgroundColor:
+              Colors.transparent, // Transparent background for dialog
+          shape: RoundedRectangleBorder(
+            borderRadius:
+                BorderRadius.circular(20.0), // Rounded corners for the dialog
           ),
-          width: dialogWidth,
-          padding: EdgeInsets.all(width < 600 ? 16.0 : 24.0), // Adjust padding for mobile vs tablet
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Title
-              Text(
-                name,
-                style: TextStyle(
-                  color: Colors.white, // Light title text
-                  fontSize: fontSize, // Responsive font size
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 20),
-              
-              // Input field with a dark background and light text
-              TextFormField(
-  keyboardType: TextInputType.number,
-  style: TextStyle(color: Colors.white), // Input text color
-  decoration: InputDecoration(
-    labelText: 'Number',
-    labelStyle: TextStyle(color: Colors.white60), // Light label color
-    filled: true,
-    fillColor: const Color.fromARGB(255, 6, 6, 6), // Dark background for input
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12), // Circular border before selection
-      borderSide: BorderSide(color: Colors.transparent), // Transparent border before selection
-    ),
-    // When focused, show a border
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12), // Rounded corners
-      borderSide: BorderSide(color: Colors.white, width: 1), // White border when focused
-    ),
-    // No border when not focused (optional, using transparent border above)
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12), // Rounded corners before focus
-      borderSide: BorderSide(color: Colors.transparent), // No visible border before selection
-    ),
-    // Optional: Disabled border if the field is disabled
-    disabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12), // Rounded corners
-      borderSide: BorderSide(color: Colors.transparent), // No visible border if disabled
-    ),
-  ),
-  onChanged: (value) {
-    InputNumber = double.tryParse(value);
-  },
-),
-
-              SizedBox(height: 20),
-              
-              // Buttons (Cancel and OK)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Cancel button
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey[700], // Dark button color
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                      ),
-                      child: Text(
-                        'Cancel',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 10), // Space between buttons on larger screens
-                  // OK button
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (InputNumber != null) {
-                          setState(() {
-                            isLoading = true;
-                          });
-
-                          switch (name) {
-                            case "Enter Number":
-                              _customShare(InputNumber!);
-                              break;
-                            case "Enter Weight":
-                              weight = InputNumber!;
-                              break;
-                            case "Enter New Weight":
-                              String formattedWeight = InputNumber!.toStringAsFixed(3);
-                              _editWeight(formattedWeight);
-                              break;
-                            default:
-                              break;
-                          }
-                        }
-                        Navigator.of(context).pop();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green, // Highlighted color
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                      ),
-                      child: Text(
-                        'OK',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ),
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [
+                  Color.fromARGB(255, 0, 0, 0), // Black
+                  Color.fromARGB(139, 96, 67, 6), // Dark Gold
                 ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
-            ],
-          ),
-        ),
-      );
-    },
-  );
-}
+              borderRadius: BorderRadius.circular(20.0), // Circular border
+            ),
+            width: dialogWidth,
+            padding: EdgeInsets.all(width < 600
+                ? 16.0
+                : 24.0), // Adjust padding for mobile vs tablet
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Title
+                Text(
+                  name,
+                  style: TextStyle(
+                    color: Colors.white, // Light title text
+                    fontSize: fontSize, // Responsive font size
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 20),
 
+                // Input field with a dark background and light text
+                TextFormField(
+                  keyboardType: TextInputType.number,
+                  style: TextStyle(color: Colors.white), // Input text color
+                  decoration: InputDecoration(
+                    labelText: 'Number',
+                    labelStyle:
+                        TextStyle(color: Colors.white60), // Light label color
+                    filled: true,
+                    fillColor: const Color.fromARGB(
+                        255, 6, 6, 6), // Dark background for input
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(
+                          12), // Circular border before selection
+                      borderSide: BorderSide(
+                          color: Colors
+                              .transparent), // Transparent border before selection
+                    ),
+                    // When focused, show a border
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius:
+                          BorderRadius.circular(12), // Rounded corners
+                      borderSide: BorderSide(
+                          color: Colors.white,
+                          width: 1), // White border when focused
+                    ),
+                    // No border when not focused (optional, using transparent border above)
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(
+                          12), // Rounded corners before focus
+                      borderSide: BorderSide(
+                          color: Colors
+                              .transparent), // No visible border before selection
+                    ),
+                    // Optional: Disabled border if the field is disabled
+                    disabledBorder: OutlineInputBorder(
+                      borderRadius:
+                          BorderRadius.circular(12), // Rounded corners
+                      borderSide: BorderSide(
+                          color: Colors
+                              .transparent), // No visible border if disabled
+                    ),
+                  ),
+                  onChanged: (value) {
+                    InputNumber = double.tryParse(value);
+                  },
+                ),
+
+                SizedBox(height: 20),
+
+                // Buttons (Cancel and OK)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Cancel button
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              Colors.grey[700], // Dark button color
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                        ),
+                        child: Text(
+                          'Cancel',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                        width: 10), // Space between buttons on larger screens
+                    // OK button
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (InputNumber != null) {
+                            setState(() {
+                              isLoading = true;
+                            });
+
+                            switch (name) {
+                              case "Enter Number":
+                                _customShare(InputNumber!);
+                                break;
+                              case "Enter Weight":
+                                weight = InputNumber!;
+                                break;
+                              case "Enter New Weight":
+                                String formattedWeight =
+                                    InputNumber!.toStringAsFixed(3);
+                                _editWeight(formattedWeight);
+
+                                break;
+                              default:
+                                break;
+                            }
+                            Navigator.of(context).pop();
+                          }else{
+                            ToastMessage.toast_('Enter valid weight.');
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green, // Highlighted color
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                        ),
+                        child: Text(
+                          'OK',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   Future<void> toggleWishlist(imageUrl, id, weight) async {
     try {
@@ -701,11 +736,49 @@ class _CommonScreenState extends State<CommonScreen>
     );
   }
 
+  //refresh the screen by navigating to same screen again;
+  void refreshScreen(BuildContext context) {
+    print("refresh screen");
+    try {
+
+      print('mainFolder: ${widget.mainFolder}');
+      print('title: ${widget.title}');
+      print('catagory : ${widget.categories}');
+
+      // Use a Future to delay the navigation
+      Future.delayed(Duration.zero, () {
+        Navigator.pop(context);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CommonScreen(
+              title: widget.title,
+              categories: widget.categories,
+              mainFolder: widget.mainFolder,
+            ),
+          ),
+        );
+      });
+    } catch (e) {
+      print("error in refresh screen $e");
+    }
+  }
+
+  void refreshBuild() {
+    print("refresh Build");
+    setState(() {
+      // Trigger the rebuild
+    });
+  }
+
   void _editWeight(String newWeight) async {
     final collection = firestore.collection(widget.mainFolder);
     final path = collection.doc(widget.title).collection(selectedCategory);
 
-    for (final imageUrl in selectedImages) {
+    // Create a copy of the list to avoid concurrent modification
+    final imagesToEdit = List<String>.from(selectedImages);
+
+    for (final imageUrl in imagesToEdit) {
       try {
         final existingDoc =
             await path.where('imageUrl', isEqualTo: imageUrl).limit(1).get();
@@ -719,9 +792,10 @@ class _CommonScreenState extends State<CommonScreen>
               .doc(existingDoc.docs.first.id)
               .set({'weight': newWeight}, SetOptions(merge: true));
           setState(() {
-            _loadImagesForCategory(selectedCategory);
+            // _loadImagesForCategory(selectedCategory);
             isSelectionMode = false;
             selectedImages.clear();
+            isLoading = false;
           });
         }
         Fluttertoast.showToast(
@@ -732,6 +806,8 @@ class _CommonScreenState extends State<CommonScreen>
           textColor: Colors.white, // Text color of the toast
           fontSize: 16.0, // Font size of the toast text
         );
+
+        refreshScreen(context);
       } catch (e) {
         Fluttertoast.showToast(
           msg: e.toString(),
@@ -785,9 +861,13 @@ class _CommonScreenState extends State<CommonScreen>
       } catch (e) {
         print('Error updating or moving document: $e');
       }
+      //making paste button false;
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('isMove', 'false');
       setState(() {
         _loadImagesForCategory(selectedCategory);
         isLoading = false;
+        ifMove = false;
       });
       Fluttertoast.showToast(
         msg: "Images Moved Successfully!",
@@ -807,269 +887,333 @@ class _CommonScreenState extends State<CommonScreen>
       child: Scaffold(
         backgroundColor: const Color.fromARGB(255, 0, 0, 0),
         appBar: AppBar(
-  leading: BackButton(
-    color: Colors.white,  // White color for BackButton to fit the dark theme
-    onPressed: () {
-      Navigator.pop(context);
-    },
-  ),
-  backgroundColor: Colors.black, // Dark background color for the AppBar
-  title: Text(
-    widget.title, // Display only the selectedCategory
-    style: GoogleFonts.rowdies(
-      textStyle: TextStyle(
-        color: Colors.white, // White text for contrast against dark background
-        fontSize: MediaQuery.of(context).size.shortestSide < 600 ? 18 : 22, // Adjust font size based on screen size
-        fontWeight: FontWeight.bold,
-      ),
-    ),
-  ),
-  actions: [
-    IconButton(
-      onPressed: () async {
-        if (isSelectionMode) {
-          setState(() {
-            isLoading = true;
-          });
-          _shareSelectedImages();
-        } else {
-          Fluttertoast.showToast(
-            msg: "Oops, No image selected to share",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-            fontSize: 16.0,
-          );
-        }
-      },
-      icon: const Icon(
-        FontAwesomeIcons.share,
-        color: Colors.green,
-        size: 30,
-      ),
-    ),
-    if (_Admin == 'Admin') ...[
-      if (isSelectionMode) ...[
-        IconButton(
-          onPressed: () async {
-            if (selectedImages.length > 1) {
-              Fluttertoast.showToast(
-                msg: "You selected ${selectedImages.length} images. Please select only 1 image to edit the weight",
-                toastLength: Toast.LENGTH_SHORT,
-                gravity: ToastGravity.BOTTOM,
-                backgroundColor: Colors.red,
-                textColor: Colors.white,
-                fontSize: 16.0,
-              );
-            } else if (selectedImages.length == 1) {
-              showNumberInputDialog(context, "Enter New Weight");
-            } else {
-              print('error');
-            }
-          },
-          icon: const Icon(
-            FontAwesomeIcons.penToSquare,
-            color: Colors.green,
-            size: 30,
-          ),
-        ),
-      ],
-    ],
-    if (isAdmin) ...[
-      PopupMenuButton<String>(
-  elevation: 3,
-  shape: RoundedRectangleBorder(
-    borderRadius: BorderRadius.circular(10.0),
-  ),
-  offset: const Offset(40, 0),
-  color: Colors.black, // Dark background for the popup menu
-  itemBuilder: (BuildContext context) {
-    return <PopupMenuEntry<String>>[
-      if (widget.mainFolder != 'RecycleBin') ...[
-        PopupMenuItem<String>(
-          value: 'custom_share',
-          child: InkWell(
-            onTap: () {
-              setState(() {
-                isLoading = true;
-              });
-              showNumberInputDialog(context, "Enter Number");
+          leading: BackButton(
+            color: Colors
+                .white, // White color for BackButton to fit the dark theme
+            onPressed: () {
+              Navigator.pop(context);
             },
-            child: Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.link,
-                    color: Colors.green, // Green icon for custom share
-                    size: MediaQuery.of(context).size.shortestSide < 600 ? 20 : 24, // Responsive icon size
-                  ),
-                  SizedBox(width: 10),
-                  Text(
-                    'Custom Share',
-                    style: TextStyle(
-                      color: Colors.green, // Green text for custom share
-                      fontWeight: FontWeight.bold,
-                      fontSize: MediaQuery.of(context).size.shortestSide < 600 ? 14 : 16, // Responsive text size
-                    ),
-                  ),
-                ],
+          ),
+          backgroundColor: Colors.black, // Dark background color for the AppBar
+          title: Text(
+            widget.title, // Display only the selectedCategory
+            style: GoogleFonts.rowdies(
+              textStyle: TextStyle(
+                color: Colors
+                    .white, // White text for contrast against dark background
+                fontSize: MediaQuery.of(context).size.shortestSide < 600
+                    ? 18
+                    : 22, // Adjust font size based on screen size
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),
-        ),
-        PopupMenuItem<String>(
-          value: 'delete',
-          child: InkWell(
-            onTap: () {
-              showDeleteConfirmationDialog('RecycleBin', 'RecycleBin', 'RecycleBin', 'Delete');
-            },
-            child: Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.delete,
-                    color: Colors.red, // Red icon for delete
-                    size: MediaQuery.of(context).size.shortestSide < 600 ? 20 : 24, // Responsive icon size
-                  ),
-                  SizedBox(width: 10),
-                  Text(
-                    'Delete',
-                    style: TextStyle(
-                      color: Colors.red, // Red text for delete
-                      fontWeight: FontWeight.bold,
-                      fontSize: MediaQuery.of(context).size.shortestSide < 600 ? 14 : 16, // Responsive text size
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        PopupMenuItem<String>(
-          value: 'Move',
-          child: InkWell(
-            onTap: () async {
-              showDeleteConfirmationDialog('tempCollection', 'tempCollection', 'tempCollection', 'Move');
-              SharedPreferences prefs = await SharedPreferences.getInstance();
-              await prefs.setString('isMove', 'true');
-            },
-            child: Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  Icon(
-                    FontAwesomeIcons.route,
-                    color: Colors.red, // Red icon for Move
-                    size: MediaQuery.of(context).size.shortestSide < 600 ? 20 : 24, // Responsive icon size
-                  ),
-                  SizedBox(width: 10),
-                  Text(
-                    'Move',
-                    style: TextStyle(
-                      color: Colors.red, // Red text for Move
-                      fontWeight: FontWeight.bold,
-                      fontSize: MediaQuery.of(context).size.shortestSide < 600 ? 14 : 16, // Responsive text size
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
-      if (_Admin == 'Admin') ...[
-        if (widget.mainFolder != 'RecycleBin') ...[
-          PopupMenuItem<String>(
-            value: 'Recycle Bin',
-            child: InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const CommonScreen(
-                      title: 'RecycleBin',
-                      categories: ['RecycleBin'],
-                      mainFolder: 'RecycleBin',
-                    ),
-                  ),
-                );
+          actions: [
+            IconButton(
+              onPressed: () async {
+                if (isSelectionMode) {
+                  setState(() {
+                    isLoading = true;
+                  });
+                  _shareSelectedImages();
+                } else {
+                  Fluttertoast.showToast(
+                    msg: "Oops, No image selected to share",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    backgroundColor: Colors.red,
+                    textColor: Colors.white,
+                    fontSize: 16.0,
+                  );
+                }
               },
-              child: Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    Icon(
-                      FontAwesomeIcons.dumpster,
-                      color: Colors.red, // Red icon for Recycle Bin
-                      size: MediaQuery.of(context).size.shortestSide < 600 ? 20 : 24, // Responsive icon size
-                    ),
-                    SizedBox(width: 10),
-                    Text(
-                      'Recycle Bin',
-                      style: TextStyle(
-                        color: Colors.red, // Red text for Recycle Bin
-                        fontWeight: FontWeight.bold,
-                        fontSize: MediaQuery.of(context).size.shortestSide < 600 ? 14 : 16, // Responsive text size
+              icon: const Icon(
+                FontAwesomeIcons.share,
+                color: Colors.green,
+                size: 30,
+              ),
+            ),
+            if (_Admin == 'Admin') ...[
+              if (isSelectionMode) ...[
+                IconButton(
+                  onPressed: () async {
+                    if (selectedImages.length > 1) {
+                      Fluttertoast.showToast(
+                        msg:
+                            "You selected ${selectedImages.length} images. Please select only 1 image to edit the weight",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        backgroundColor: Colors.red,
+                        textColor: Colors.white,
+                        fontSize: 16.0,
+                      );
+                    } else if (selectedImages.length == 1) {
+                      showNumberInputDialog(context, "Enter New Weight");
+                    } else {
+                      print('error');
+                    }
+                  },
+                  icon: const Icon(
+                    FontAwesomeIcons.penToSquare,
+                    color: Colors.green,
+                    size: 30,
+                  ),
+                ),
+              ],
+            ],
+            if (isAdmin) ...[
+              PopupMenuButton<String>(
+                elevation: 3,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                offset: const Offset(40, 0),
+                color: Colors.black, // Dark background for the popup menu
+                itemBuilder: (BuildContext context) {
+                  return <PopupMenuEntry<String>>[
+                    if (widget.mainFolder != 'RecycleBin') ...[
+                      PopupMenuItem<String>(
+                        value: 'custom_share',
+                        child: InkWell(
+                          onTap: () {
+                            setState(() {
+                              isLoading = true;
+                            });
+                            showNumberInputDialog(context, "Enter Number");
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.link,
+                                  color: Colors
+                                      .green, // Green icon for custom share
+                                  size:
+                                      MediaQuery.of(context).size.shortestSide <
+                                              600
+                                          ? 20
+                                          : 24, // Responsive icon size
+                                ),
+                                SizedBox(width: 10),
+                                Text(
+                                  'Custom Share',
+                                  style: TextStyle(
+                                    color: Colors
+                                        .green, // Green text for custom share
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: MediaQuery.of(context)
+                                                .size
+                                                .shortestSide <
+                                            600
+                                        ? 14
+                                        : 16, // Responsive text size
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
+                      PopupMenuItem<String>(
+                        value: 'delete',
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.pop(context);
+
+                            showDeleteConfirmationDialog('RecycleBin',
+                                'RecycleBin', 'RecycleBin', 'Delete');
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.delete,
+                                  color: Colors.red, // Red icon for delete
+                                  size:
+                                      MediaQuery.of(context).size.shortestSide <
+                                              600
+                                          ? 20
+                                          : 24, // Responsive icon size
+                                ),
+                                SizedBox(width: 10),
+                                Text(
+                                  'Delete',
+                                  style: TextStyle(
+                                    color: Colors.red, // Red text for delete
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: MediaQuery.of(context)
+                                                .size
+                                                .shortestSide <
+                                            600
+                                        ? 14
+                                        : 16, // Responsive text size
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      PopupMenuItem<String>(
+                        value: 'Move',
+                        child: InkWell(
+                          onTap: () async {
+                            Navigator.pop(context);
+
+                            showDeleteConfirmationDialog('tempCollection',
+                                'tempCollection', 'tempCollection', 'Move');
+                            SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+                            await prefs.setString('isMove', 'true');
+                            print("isMove : $isMove");
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  FontAwesomeIcons.route,
+                                  color: Colors.red, // Red icon for Move
+                                  size:
+                                      MediaQuery.of(context).size.shortestSide <
+                                              600
+                                          ? 20
+                                          : 24, // Responsive icon size
+                                ),
+                                SizedBox(width: 10),
+                                Text(
+                                  'Move',
+                                  style: TextStyle(
+                                    color: Colors.red, // Red text for Move
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: MediaQuery.of(context)
+                                                .size
+                                                .shortestSide <
+                                            600
+                                        ? 14
+                                        : 16, // Responsive text size
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                    if (_Admin == 'Admin') ...[
+                      if (widget.mainFolder != 'RecycleBin') ...[
+                        PopupMenuItem<String>(
+                          value: 'Recycle Bin',
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const CommonScreen(
+                                    title: 'RecycleBin',
+                                    categories: ['RecycleBin'],
+                                    mainFolder: 'RecycleBin',
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    FontAwesomeIcons.dumpster,
+                                    color:
+                                        Colors.red, // Red icon for Recycle Bin
+                                    size: MediaQuery.of(context)
+                                                .size
+                                                .shortestSide <
+                                            600
+                                        ? 20
+                                        : 24, // Responsive icon size
+                                  ),
+                                  SizedBox(width: 10),
+                                  Text(
+                                    'Recycle Bin',
+                                    style: TextStyle(
+                                      color: Colors
+                                          .red, // Red text for Recycle Bin
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .shortestSide <
+                                              600
+                                          ? 14
+                                          : 16, // Responsive text size
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                      if (widget.mainFolder == 'RecycleBin') ...[
+                        PopupMenuItem<String>(
+                          value: 'Restore Images',
+                          child: InkWell(
+                            onTap: () async {
+                              setState(() {
+                                isLoading = true;
+                              });
+                              await restoreFromRecycleBin();
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    FontAwesomeIcons.recycle,
+                                    color:
+                                        Colors.green, // Green icon for Restore
+                                    size: MediaQuery.of(context)
+                                                .size
+                                                .shortestSide <
+                                            600
+                                        ? 20
+                                        : 24, // Responsive icon size
+                                  ),
+                                  SizedBox(width: 10),
+                                  Text(
+                                    'Restore Images',
+                                    style: TextStyle(
+                                      color: Colors
+                                          .green, // Green text for Restore
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .shortestSide <
+                                              600
+                                          ? 14
+                                          : 16, // Responsive text size
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ];
+                },
+                icon: const Icon(
+                  Icons.more_vert,
+                  color: Colors.white, // White icon for dark theme
+                  size: 30,
                 ),
               ),
-            ),
-          ),
-        ],
-        if (widget.mainFolder == 'RecycleBin') ...[
-          PopupMenuItem<String>(
-            value: 'Restore Images',
-            child: InkWell(
-              onTap: () async {
-                setState(() {
-                  isLoading = true;
-                });
-                await restoreFromRecycleBin();
-              },
-              child: Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    Icon(
-                      FontAwesomeIcons.recycle,
-                      color: Colors.green, // Green icon for Restore
-                      size: MediaQuery.of(context).size.shortestSide < 600 ? 20 : 24, // Responsive icon size
-                    ),
-                    SizedBox(width: 10),
-                    Text(
-                      'Restore Images',
-                      style: TextStyle(
-                        color: Colors.green, // Green text for Restore
-                        fontWeight: FontWeight.bold,
-                        fontSize: MediaQuery.of(context).size.shortestSide < 600 ? 14 : 16, // Responsive text size
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ],
-    ];
-  },
-  icon: const Icon(
-    Icons.more_vert,
-    color: Colors.white, // White icon for dark theme
-    size: 30,
-  ),
-),
-
-    ],
-  ],
-  elevation: 0,
-),
-
+            ],
+          ],
+          elevation: 0,
+        ),
         body: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -1089,71 +1233,87 @@ class _CommonScreenState extends State<CommonScreen>
                 child: Column(
                   children: [
                     Container(
-   margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width < 600 ? 20 : 80), // Reduced margin for better fit on mobile
-  height: 55,
-  decoration: BoxDecoration(
-    color: const Color.fromARGB(255, 70, 46, 16),
-    borderRadius: BorderRadius.circular(25.0),
-  ),
-  child: LayoutBuilder(
-    builder: (context, constraints) {
-      // Get the screen width to adapt to mobile/tablet devices
-      double width = constraints.maxWidth;
+                      margin: EdgeInsets.symmetric(
+                          horizontal: MediaQuery.of(context).size.width < 600
+                              ? 20
+                              : 80), // Reduced margin for better fit on mobile
+                      height: 55,
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 70, 46, 16),
+                        borderRadius: BorderRadius.circular(25.0),
+                      ),
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          // Get the screen width to adapt to mobile/tablet devices
+                          double width = constraints.maxWidth;
 
-      // Adjust TabBar settings based on screen width
-      double tabFontSize = width < 600 ? 14 : 18; // Smaller font for mobile, larger for tablet/desktop
-      double tabPadding = width < 600 ? 8 : 16; // Adjust padding for smaller screens
-      
-      return TabBar(
-        controller: tabController,
-        dividerColor: Colors.transparent,
-        indicator: BoxDecoration(
-          color: Colors.orangeAccent,
-          borderRadius: BorderRadius.circular(25.0),
-        ),
-        indicatorColor: Colors.transparent, // Removes default underline
-        indicatorSize: TabBarIndicatorSize.tab, // Ensures the indicator covers the entire tab
-        labelColor: const Color.fromARGB(255, 253, 253, 253),
-        unselectedLabelColor: const Color.fromARGB(255, 255, 187, 0),
-        tabs: widget.categories.map((category) {
-          return FutureBuilder<int>(
-            future: _countImagesInCategory(category),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Tab(
-                  text: "$category Loading...",
-                );
-              } else if (snapshot.hasError) {
-                return Tab(
-                  text: "$category Error",
-                );
-              } else {
-                catagoryImagescount = snapshot.data ?? 10;
-                if (catagoryImagescount == 0) {
-                  catagoryImagescount += 6;
-                }
+                          // Adjust TabBar settings based on screen width
+                          double tabFontSize = width < 600
+                              ? 14
+                              : 18; // Smaller font for mobile, larger for tablet/desktop
+                          double tabPadding = width < 600
+                              ? 8
+                              : 16; // Adjust padding for smaller screens
 
-                // Create the tab with dynamically adjusted font size and text
-                return Tab(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: tabPadding), // Add horizontal padding
-                    child: Text(
-                      "$category ${catagoryImagescount.toString()}",
-                      style: TextStyle(
-                        fontSize: tabFontSize, // Responsive font size
-                        fontWeight: FontWeight.bold, // Optional: Make text bold
+                          return TabBar(
+                            controller: tabController,
+                            dividerColor: Colors.transparent,
+                            indicator: BoxDecoration(
+                              color: Colors.orangeAccent,
+                              borderRadius: BorderRadius.circular(25.0),
+                            ),
+                            indicatorColor:
+                                Colors.transparent, // Removes default underline
+                            indicatorSize: TabBarIndicatorSize
+                                .tab, // Ensures the indicator covers the entire tab
+                            labelColor:
+                                const Color.fromARGB(255, 253, 253, 253),
+                            unselectedLabelColor:
+                                const Color.fromARGB(255, 255, 187, 0),
+                            tabs: widget.categories.map((category) {
+                              return FutureBuilder<int>(
+                                future: _countImagesInCategory(category),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Tab(
+                                      text: "$category Loading...",
+                                    );
+                                  } else if (snapshot.hasError) {
+                                    return Tab(
+                                      text: "$category Error",
+                                    );
+                                  } else {
+                                    catagoryImagescount = snapshot.data ?? 10;
+                                    if (catagoryImagescount == 0) {
+                                      catagoryImagescount += 6;
+                                    }
+
+                                    // Create the tab with dynamically adjusted font size and text
+                                    return Tab(
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal:
+                                                tabPadding), // Add horizontal padding
+                                        child: Text(
+                                          "$category ${catagoryImagescount.toString()}",
+                                          style: TextStyle(
+                                            fontSize:
+                                                tabFontSize, // Responsive font size
+                                            fontWeight: FontWeight
+                                                .bold, // Optional: Make text bold
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
+                              );
+                            }).toList(),
+                          );
+                        },
                       ),
                     ),
-                  ),
-                );
-              }
-            },
-          );
-        }).toList(),
-      );
-    },
-  ),
-),
                     const SizedBox(
                       height: 20,
                     ),
@@ -1164,33 +1324,47 @@ class _CommonScreenState extends State<CommonScreen>
                           final imageUrls = imageUrlsByCategory[category] ?? [];
                           return imageUrls.isEmpty
                               ? Center(
-  // Show a message when there are no images in the wishlist
-  child: Column(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-      // Adjust font size based on screen width
-      Text(
-        'No images found!',
-        style: TextStyle(
-          fontSize: MediaQuery.of(context).size.width < 600 ? 18 : 24, // Font size for mobile vs tablet
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      SizedBox(
-        height: MediaQuery.of(context).size.width < 600 ? 10 : 20, // Adjust height for spacing based on device
-      ),
-      Text(
-        'Admin please add images to this category',
-        style: TextStyle(
-          fontSize: MediaQuery.of(context).size.width < 600 ? 16 : 20, // Font size for mobile vs tablet
-          color: Colors.white,
-        ),
-      ),
-    ],
-  ),
-)
-
+                                  // Show a message when there are no images in the wishlist
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      // Adjust font size based on screen width
+                                      Text(
+                                        'No images found!',
+                                        style: TextStyle(
+                                          fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  600
+                                              ? 18
+                                              : 24, // Font size for mobile vs tablet
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: MediaQuery.of(context)
+                                                    .size
+                                                    .width <
+                                                600
+                                            ? 10
+                                            : 20, // Adjust height for spacing based on device
+                                      ),
+                                      Text(
+                                        'Admin please add images to this category',
+                                        style: TextStyle(
+                                          fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  600
+                                              ? 16
+                                              : 20, // Font size for mobile vs tablet
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
                               : buildGridView(
                                   imageUrls); // Return the result of buildGridView
                         }).toList(), // Convert the mapped results to a list
@@ -1218,417 +1392,464 @@ class _CommonScreenState extends State<CommonScreen>
             ],
           ),
         ),
-       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-floatingActionButton: Padding(
-  padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.width < 600 ? 20 : 30), // Adjust bottom padding based on screen size
-  child: Column(
-    mainAxisAlignment: MainAxisAlignment.end,
-    crossAxisAlignment: CrossAxisAlignment.end,
-    children: [
-      // Move Button - Only shown if `ifMove` is true
-      if (ifMove)
-        FloatingActionButton(
-          backgroundColor: Colors.deepOrangeAccent, // Dark accent for move button
-          onPressed: () async {
-            _moveImagesToOtherCategory();
-          },
-          child: const Icon(FontAwesomeIcons.paste, color: Colors.white), // White icon for contrast
-        ),
-      
-      // Spacer between buttons, adjust size for tablet view
-      SizedBox(height: MediaQuery.of(context).size.width < 600 ? 16 : 24), // Adjust spacing for different screen sizes
+        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+        floatingActionButton: Padding(
+          padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).size.width < 600
+                  ? 20
+                  : 30), // Adjust bottom padding based on screen size
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              // Move Button - Only shown if `ifMove` is true
+              if (ifMove)
+                FloatingActionButton(
+                  backgroundColor:
+                      Colors.deepOrangeAccent, // Dark accent for move button
+                  onPressed: () async {
+                    _moveImagesToOtherCategory();
 
-      // WhatsApp Button - Custom shaped
-      FloatingActionButton(
-        backgroundColor: Colors.green, // WhatsApp green color
-        onPressed: () {
-          final whatsappLink =
-              'https://wa.me/919247879511?text=Hi%2C%20Balaji%20Jewellers%2C%20I%20am%20$userName%20and%20interested%20in%20your%20catalogue';
-          launch(whatsappLink);
-        },
-        child: Container(
-          width: MediaQuery.of(context).size.width < 600 ? 56.0 : 100.0, // Adjust width for mobile vs tablet
-          height: MediaQuery.of(context).size.width < 600 ? 56.0 : 100.0, // Adjust height for mobile vs tablet
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12.0),
-            color: Colors.black, // Black background for the container
+                  },
+                  child: const Icon(FontAwesomeIcons.paste,
+                      color: Colors.white), // White icon for contrast
+                ),
+
+              // Spacer between buttons, adjust size for tablet view
+              SizedBox(
+                  height: MediaQuery.of(context).size.width < 600
+                      ? 16
+                      : 24), // Adjust spacing for different screen sizes
+
+              // WhatsApp Button - Custom shaped
+              FloatingActionButton(
+                backgroundColor: Colors.green, // WhatsApp green color
+                onPressed: () {
+                  final whatsappLink =
+                      'https://wa.me/919247879511?text=Hi%2C%20Balaji%20Jewellers%2C%20I%20am%20$userName%20and%20interested%20in%20your%20catalogue';
+                  launch(whatsappLink);
+                },
+                child: Container(
+                  width: MediaQuery.of(context).size.width < 600
+                      ? 56.0
+                      : 100.0, // Adjust width for mobile vs tablet
+                  height: MediaQuery.of(context).size.width < 600
+                      ? 56.0
+                      : 100.0, // Adjust height for mobile vs tablet
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12.0),
+                    color: Colors.black, // Black background for the container
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(
+                        12.0), // To ensure rounded corners
+                    child: Image.network(
+                      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSA0W1ZrYWrI28u4z8pNVEdsD-QrbfWPn9QTs1n5amNXYEtxsrYCmsSbfjG6FuW7ZfiOU&usqp=CAU", // WhatsApp logo URL
+                      width: double
+                          .infinity, // Make the image take up the full width
+                      height: double
+                          .infinity, // Make the image take up the full height
+                      fit: BoxFit
+                          .cover, // Ensures the image covers the entire space without distorting
+                    ),
+                  ),
+                ),
+              ),
+
+              // Spacer between buttons, adjust size for tablet view
+              SizedBox(
+                  height: MediaQuery.of(context).size.width < 600
+                      ? 16
+                      : 24), // Adjust spacing for different screen sizes
+
+              // Upload Button - Only shown if `isAdmin` is true
+              if (isAdmin)
+                FloatingActionButton(
+                  backgroundColor: const Color.fromARGB(
+                      255, 145, 102, 0), // Blue color for upload button
+                  onPressed: () async {
+                    final pickedImage = await ImagePicker()
+                        .pickImage(source: ImageSource.gallery);
+                    if (pickedImage != null) {
+                      _uploadImageToFirebase(pickedImage.path);
+                    }
+                  },
+                  child: const Icon(FontAwesomeIcons.plus,
+                      color: Colors.white), // White icon for contrast
+                ),
+            ],
           ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(12.0), // To ensure rounded corners
-            child: Image.network(
-              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSA0W1ZrYWrI28u4z8pNVEdsD-QrbfWPn9QTs1n5amNXYEtxsrYCmsSbfjG6FuW7ZfiOU&usqp=CAU", // WhatsApp logo URL
-              width: double.infinity, // Make the image take up the full width
-              height: double.infinity, // Make the image take up the full height
-              fit: BoxFit.cover, // Ensures the image covers the entire space without distorting
-            ),
-          ),
         ),
-      ),
-      
-      // Spacer between buttons, adjust size for tablet view
-      SizedBox(height: MediaQuery.of(context).size.width < 600 ? 16 : 24), // Adjust spacing for different screen sizes
-
-      // Upload Button - Only shown if `isAdmin` is true
-      if (isAdmin)
-        FloatingActionButton(
-          backgroundColor: const Color.fromARGB(255, 145, 102, 0), // Blue color for upload button
-          onPressed: () async {
-            final pickedImage = await ImagePicker().pickImage(source: ImageSource.gallery);
-            if (pickedImage != null) {
-              _uploadImageToFirebase(pickedImage.path);
-            }
-          },
-          child: const Icon(FontAwesomeIcons.plus, color: Colors.white), // White icon for contrast
-        ),
-    ],
-  ),
-),
-
-
       ),
     );
   }
 
   Widget buildGridView(List<DocumentReference<Object?>> imageUrls) {
-  int itemCount = isAdmin
-      ? imageUrls.length
-      : imageUrls.length <= 50
-          ? imageUrls.length
-          : 50;
+    int itemCount = isAdmin
+        ? imageUrls.length
+        : imageUrls.length <= 50
+            ? imageUrls.length
+            : 50;
 
-  return LayoutBuilder(
-    builder: (context, constraints) {
-      // Determine the number of columns dynamically based on screen width
-      int crossAxisCount = constraints.maxWidth < 600
-          ? 2 // Mobile phones
-          : constraints.maxWidth < 900
-              ? 3 // Small tablets
-              : 4; // Larger tablets and above
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Determine the number of columns dynamically based on screen width
+        int crossAxisCount = constraints.maxWidth < 600
+            ? 2 // Mobile phones
+            : constraints.maxWidth < 900
+                ? 3 // Small tablets
+                : 4; // Larger tablets and above
 
-      double childAspectRatio = constraints.maxWidth < 600
-          ? 0.7 // Taller items for smaller screens
-          : 0.75; // Wider items for larger screens
+        double childAspectRatio = constraints.maxWidth < 600
+            ? 0.7 // Taller items for smaller screens
+            : 0.75; // Wider items for larger screens
 
-      return GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: crossAxisCount,
-          mainAxisSpacing: MediaQuery.of(context).size.width < 600 ? 5 : 8,
-crossAxisSpacing: MediaQuery.of(context).size.width < 600 ? 5 : 8,
+        return GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: crossAxisCount,
+            mainAxisSpacing: MediaQuery.of(context).size.width < 600 ? 5 : 8,
+            crossAxisSpacing: MediaQuery.of(context).size.width < 600 ? 5 : 8,
 
-          childAspectRatio: childAspectRatio, // Maintain proper aspect ratio
-        ),
-        itemCount: itemCount,
-        itemBuilder: (BuildContext context, index) {
-          final documentReference = imageUrls[index];
+            childAspectRatio: childAspectRatio, // Maintain proper aspect ratio
+          ),
+          itemCount: itemCount,
+          itemBuilder: (BuildContext context, index) {
+            final documentReference = imageUrls[index];
 
-          return FutureBuilder<Map<String, dynamic>>(
-            future: _getImageUrlFromReference(documentReference),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState != ConnectionState.done) {
-                // Show shimmer while loading
-                return Shimmer.fromColors(
-                  baseColor: Colors.grey[300]!,
-                  highlightColor: Colors.grey[100]!,
-                  child: Container(
-                    width: double.infinity,
-                    height: 300, // Adjust the height as needed
-                    color: Colors.white,
-                  ),
-                );
-              } else if (snapshot.hasError) {
-                return const Text('Error loading image');
-              } else {
-                final data = snapshot.data;
-                final imageUrl = data?['imageUrl'];
-                final id = data?['id'];
-                final weight = data?['weight'];
-                final isSelected = selectedImages.contains(imageUrl);
-                final isInWish = isInWishlist.contains(imageUrl);
-
-                return Container(
-                  child: Card(
-                    color: const Color.fromARGB(115, 0, 0, 0),
-                    elevation: 4,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16.0),
+            return FutureBuilder<Map<String, dynamic>>(
+              future: _getImageUrlFromReference(documentReference),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState != ConnectionState.done) {
+                  // Show shimmer while loading
+                  return Shimmer.fromColors(
+                    baseColor: Colors.grey[300]!,
+                    highlightColor: Colors.grey[100]!,
+                    child: Container(
+                      width: double.infinity,
+                      height: 200, // Adjust the height as needed
+                      color: Colors.white,
                     ),
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          if (isSelectionMode) {
+                  );
+                } else if (snapshot.hasError) {
+                  return const Text('Error loading image');
+                } else {
+                  final data = snapshot.data;
+                  final imageUrl = data?['imageUrl'];
+                  final id = data?['id'];
+                  final weight = data?['weight'];
+                  final isSelected = selectedImages.contains(imageUrl);
+                  final isInWish = isInWishlist.contains(imageUrl);
+
+                  return Container(
+                    child: Card(
+                      color: const Color.fromARGB(115, 0, 0, 0),
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16.0),
+                      ),
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            if (isSelectionMode) {
+                              if (!isSelected) {
+                                selectedImages.add(imageUrl!);
+                              } else {
+                                selectedImages.remove(imageUrl);
+                                if (selectedImages.isEmpty) {
+                                  isSelectionMode = false;
+                                }
+                              }
+                            } else {
+                              _showImagePopup(context, imageUrl!, id, weight);
+                            }
+                          });
+                        },
+                        onLongPress: () {
+                          setState(() {
+                            isSelectionMode = !isSelectionMode;
                             if (!isSelected) {
                               selectedImages.add(imageUrl!);
-                            } else {
-                              selectedImages.remove(imageUrl);
-                              if (selectedImages.isEmpty) {
-                                isSelectionMode = false;
-                              }
                             }
-                          } else {
-                            _showImagePopup(context, imageUrl!, id, weight);
-                          }
-                        });
-                      },
-                      onLongPress: () {
-                        setState(() {
-                          isSelectionMode = !isSelectionMode;
-                          if (!isSelected) {
-                            selectedImages.add(imageUrl!);
-                          }
-                        });
-                      },
-                      child: SizedBox(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Stack(
-                              children: [
-                                SizedBox(
-                                  height: MediaQuery.of(context).size.height * (MediaQuery.of(context).size.width < 600 ? 0.22 : 0.2),
-
-                                  width: double.infinity,
-                                  child: ClipRRect(
-                                    borderRadius: const BorderRadius.only(
-                                      topLeft: Radius.circular(8.0),
-                                      topRight: Radius.circular(8.0),
-                                    ),
-                                    child: CachedNetworkImage(
-                                      imageUrl: imageUrl.toString(),
-                                      fit: BoxFit.cover,
-                                      placeholder: (context, url) =>
-                                          Shimmer.fromColors(
-                                        baseColor: const Color.fromARGB(113, 0, 0, 0),
-                                        highlightColor:
-                                            const Color.fromARGB(255, 58, 33, 12),
-                                        child: Container(
-                                          width: double.infinity,
-                                          height: double.infinity,
-                                          color: const Color.fromARGB(255, 0, 0, 0),
-                                        ),
-                                      ),
-                                      errorWidget: (context, url, error) =>
-                                          const Icon(Icons.error),
-                                    ),
-                                  ),
-                                ),
-                                if (isSelected)
-                                  const Positioned(
-                                    top: 8,
-                                    right: 8,
-                                    child: Icon(
-                                      Icons.check_circle,
-                                      color: Colors.green,
-                                      size: 32,
-                                    ),
-                                  ),
-                              ],
-                            ),
-                            const SizedBox(height: 5),
-                            Container(
-                              margin: const EdgeInsets.symmetric(horizontal: 10),
-                              child: Column(
+                          });
+                        },
+                        child: SizedBox(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Stack(
                                 children: [
-                                  Text(
-                                    "Weight : $weight",
-                                    style:  TextStyle(
-                                      color: Color.fromARGB(172, 255, 255, 255),
-                                      fontWeight: FontWeight.w700,
-                                     fontSize: MediaQuery.of(context).size.width < 600 ? 14 : 18,
-
+                                  SizedBox(
+                                    height: MediaQuery.of(context).size.height *
+                                        (MediaQuery.of(context).size.width < 600
+                                            ? 0.22
+                                            : 0.2),
+                                    width: double.infinity,
+                                    child: ClipRRect(
+                                      borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(8.0),
+                                        topRight: Radius.circular(8.0),
+                                      ),
+                                      child: CachedNetworkImage(
+                                        imageUrl: imageUrl.toString(),
+                                        fit: BoxFit.cover,
+                                        placeholder: (context, url) =>
+                                            Shimmer.fromColors(
+                                          baseColor: const Color.fromARGB(
+                                              113, 0, 0, 0),
+                                          highlightColor: const Color.fromARGB(
+                                              255, 58, 33, 12),
+                                          child: Container(
+                                            width: double.infinity,
+                                            height: double.infinity,
+                                            color: const Color.fromARGB(
+                                                255, 0, 0, 0),
+                                          ),
+                                        ),
+                                        errorWidget: (context, url, error) =>
+                                            const Icon(Icons.error),
+                                      ),
                                     ),
                                   ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        'Id : $id',
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w700,
-                                          color: Color.fromARGB(173, 255, 255, 255),
-                                        ),
+                                  if (isSelected)
+                                    const Positioned(
+                                      top: 8,
+                                      right: 8,
+                                      child: Icon(
+                                        Icons.check_circle,
+                                        color: Colors.green,
+                                        size: 32,
                                       ),
-                                      IconButton(
-                                        onPressed: () {
-                                          toggleWishlist(
-                                              imageUrl, id, weight.toString());
-                                        },
-                                        icon: Icon(
-                                          isInWish
-                                              ? Icons.favorite
-                                              : Icons.favorite_outline,
-                                          size: 30,
-                                          color: isInWish
-                                              ? Colors.red
-                                              : const Color.fromARGB(255, 255, 255, 255),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                    ),
                                 ],
                               ),
-                            ),
-                          ],
+                              const SizedBox(height: 5),
+                              Container(
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 10),
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      "Weight : $weight",
+                                      style: TextStyle(
+                                        color:
+                                            Color.fromARGB(172, 255, 255, 255),
+                                        fontWeight: FontWeight.w700,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width <
+                                                    600
+                                                ? 14
+                                                : 18,
+                                      ),
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          'Id : $id',
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                            color: Color.fromARGB(
+                                                173, 255, 255, 255),
+                                          ),
+                                        ),
+                                        IconButton(
+                                          onPressed: () {
+                                            toggleWishlist(imageUrl, id,
+                                                weight.toString());
+                                          },
+                                          icon: Icon(
+                                            isInWish
+                                                ? Icons.favorite
+                                                : Icons.favorite_outline,
+                                            size: 30,
+                                            color: isInWish
+                                                ? Colors.red
+                                                : const Color.fromARGB(
+                                                    255, 255, 255, 255),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                );
-              }
-            },
-          );
-        },
-      );
-    },
-  );
-}
-
+                  );
+                }
+              },
+            );
+          },
+        );
+      },
+    );
+  }
 
   Future<void>? showDeleteConfirmationDialog(
-    String main, String title, String catagory, String name) {
-  final firestore = FirebaseFirestore.instance;
-  final mainCollection = firestore.collection(widget.mainFolder);
-  final collection =
-      mainCollection.doc(widget.title).collection(selectedCategory);
+      String main, String title, String catagory, String name) {
+    print("show DeleteConfirmation");
+    final firestore = FirebaseFirestore.instance;
+    final mainCollection = firestore.collection(widget.mainFolder);
+    final collection =
+        mainCollection.doc(widget.title).collection(selectedCategory);
 
-  final recyclemainCollection = firestore.collection(main);
-  final recycleBinCollection =
-      recyclemainCollection.doc(title).collection(catagory);
+    final recyclemainCollection = firestore.collection(main);
+    final recycleBinCollection =
+        recyclemainCollection.doc(title).collection(catagory);
 
-  final imagesToRemove = selectedImages.toList(); // Making a copy of selectedImages for efficiency
+    final imagesToRemove = selectedImages
+        .toList(); // Making a copy of selectedImages for efficiency
 
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      // Get the screen width to make it responsive
-      double width = MediaQuery.of(context).size.width;
-      double dialogWidth = width < 600 ? width * 0.85 : width * 0.5; // Larger width for tablets
-      double fontSize = width < 600 ? 18 : 22; // Larger font size for tablets
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // Get the screen width to make it responsive
+        double width = MediaQuery.of(context).size.width;
+        double dialogWidth = width < 600
+            ? width * 0.85
+            : width * 0.5; // Larger width for tablets
+        double fontSize = width < 600 ? 18 : 22; // Larger font size for tablets
 
-      return Dialog(
-        backgroundColor: Colors.black, // Dark background for the dialog
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20.0), // Rounded corners for the dialog
-        ),
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [
-                Color.fromARGB(255, 0, 0, 0),
-                Color.fromARGB(139, 96, 67, 6)
-              ], // Black to Gold gradient
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+        return Dialog(
+          backgroundColor: Colors.black, // Dark background for the dialog
+          shape: RoundedRectangleBorder(
+            borderRadius:
+                BorderRadius.circular(20.0), // Rounded corners for the dialog
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [
+                  Color.fromARGB(255, 0, 0, 0),
+                  Color.fromARGB(139, 96, 67, 6)
+                ], // Black to Gold gradient
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(20.0),
             ),
-            borderRadius: BorderRadius.circular(20.0),
-          ),
-          width: dialogWidth, // Adjust width based on device size
-          padding: EdgeInsets.all(36.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Title
-              Text(
-                '$name Selected Items?',
-                style: TextStyle(
-                  color: Colors.white, // Light color for title
-                  fontSize: fontSize, // Responsive font size
-                  fontWeight: FontWeight.bold,
+            width: dialogWidth, // Adjust width based on device size
+            padding: EdgeInsets.all(36.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Title
+                Text(
+                  '$name Selected Items?',
+                  style: TextStyle(
+                    color: Colors.white, // Light color for title
+                    fontSize: fontSize, // Responsive font size
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              SizedBox(height: 20),
-              // Content text
-              Text(
-                'Are you sure you want to $name the selected items?',
-                style: TextStyle(
-                  color: Colors.white60, // Light color for content text
-                  fontSize: fontSize - 4, // Slightly smaller font size for content
+                SizedBox(height: 20),
+                // Content text
+                Text(
+                  'Are you sure you want to $name the selected items?',
+                  style: TextStyle(
+                    color: Colors.white60, // Light color for content text
+                    fontSize:
+                        fontSize - 4, // Slightly smaller font size for content
+                  ),
                 ),
-              ),
-              SizedBox(height: 20),
-              // Buttons
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Cancel button
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey[700], // Dark button color
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
+                SizedBox(height: 20),
+                // Buttons
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Cancel button
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey[700], // Dark button color
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(color: Colors.white),
                       ),
                     ),
-                    child: Text(
-                      'Cancel',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                  // OK button
-                  ElevatedButton(
-                    onPressed: () async {
-                      Navigator.of(context).pop();
-                      // Implement move to recycle bin logic here
-                      for (var imageUrl in imagesToRemove) {
-                        try {
-                          final existingDoc = await collection
-                              .where('imageUrl', isEqualTo: imageUrl)
-                              .limit(1)
-                              .get();
+                    // OK button
+                    ElevatedButton(
+                      onPressed: () async {
+                        Navigator.of(context).pop();
+                        // Implement move to recycle bin logic here
+                        for (var imageUrl in imagesToRemove) {
+                          try {
+                            final existingDoc = await collection
+                                .where('imageUrl', isEqualTo: imageUrl)
+                                .limit(1)
+                                .get();
 
-                          if (existingDoc.docs.isNotEmpty) {
-                            // Move the item to the recycle bin
-                            if (widget.mainFolder != 'RecycleBin') {
-                              await recycleBinCollection
-                                  .add(existingDoc.docs.first.data());
+                            if (existingDoc.docs.isNotEmpty) {
+                              // Move the item to the recycle bin
+                              if (widget.mainFolder != 'RecycleBin') {
+                                await recycleBinCollection
+                                    .add(existingDoc.docs.first.data());
+                              }
+                              await collection
+                                  .doc(existingDoc.docs.first.id)
+                                  .delete();
+                              imageUrlCache.remove(
+                                  existingDoc.docs.first.reference.path);
+                            } else {
+                              print('Error Moving images to Recycle Bin: ');
                             }
-                            await collection.doc(existingDoc.docs.first.id).delete();
-                            imageUrlCache.remove(existingDoc.docs.first.reference.path);
-                          } else {
-                            print('Error Moving images to Recycle Bin: ');
+                          } catch (e) {
+                            print('Error Moving images to Recycle Bin: $e');
                           }
-                        } catch (e) {
-                          print('Error Moving images to Recycle Bin: $e');
                         }
-                      }
-                      setState(() {
-                        isLoading = false;
-                      });
+                        setState(() {
+                          isLoading = false;
+                          selectedImages.clear();
+                        });
 
-                      Fluttertoast.showToast(
-                        msg: "Images $name Successfully!",
-                        toastLength: Toast.LENGTH_SHORT, // Duration for the toast message
-                        gravity: ToastGravity.BOTTOM, // Position of the toast message
-                        backgroundColor: Colors.red, // Background color of the toast
-                        textColor: Colors.white, // Text color of the toast
-                        fontSize: 16.0, // Font size of the toast text
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green, // Highlighted button color
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
+                        Fluttertoast.showToast(
+                          msg: "Images $name Successfully!",
+                          toastLength: Toast
+                              .LENGTH_SHORT, // Duration for the toast message
+                          gravity: ToastGravity
+                              .BOTTOM, // Position of the toast message
+                          backgroundColor:
+                              Colors.red, // Background color of the toast
+                          textColor: Colors.white, // Text color of the toast
+                          fontSize: 16.0, // Font size of the toast text
+                        );
+
+                        //refresh screen
+                        // refreshBuild();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            Colors.green, // Highlighted button color
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                      child: Text(
+                        name,
+                        style: TextStyle(color: Colors.white),
                       ),
                     ),
-                    child: Text(
-                      name,
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
-        ),
-      );
-    },
-  );
-  return null;
-}
-
-
+        );
+      },
+    );
+    return null;
+  }
 
   Future<Map<String, dynamic>> _getImageUrlFromReference(
       DocumentReference reference) async {

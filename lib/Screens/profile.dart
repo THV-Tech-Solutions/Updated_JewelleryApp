@@ -210,8 +210,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ],
                           ),
                           child: const CircleAvatar(
-                            backgroundImage: NetworkImage(
-                                'https://st2.depositphotos.com/7573446/12066/v/450/depositphotos_120663986-stock-illustration-people-web-vector-icon.jpg'),
+                            backgroundImage: AssetImage(
+                                'assets/images/profileimage2.jpg'),
                           ),
                         ),
                       ],

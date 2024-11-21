@@ -4,10 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:jewellery/Login_Screens/signin_screen.dart';
 import 'package:jewellery/Login_Screens/user_check.dart';
 import 'package:jewellery/Login_Screens/welcome_screen.dart';
 import 'package:jewellery/Screens/tabs.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:firebase_app_check/firebase_app_check.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,6 +23,9 @@ void main() async {
       projectId: "balaji-jewellers-d4735",
     ),
   );
+  // await FirebaseAppCheck.instance.activate(
+  //   androidProvider: AndroidProvider.playIntegrity,
+  // );
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final String? userPhoneNumber = prefs.getString('userPhoneNumber');
 
@@ -47,7 +53,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       home: userLoggedIn ? const TabsScreen() : const WelcomeScreen(),
-      // home: TabsScreen(),
+  
       title: "Balaji Jewellers",
     );
   }

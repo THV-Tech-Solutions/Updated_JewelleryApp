@@ -6,6 +6,7 @@ import 'package:photo_view/photo_view.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'dart:io';
 import 'package:share/share.dart';
@@ -14,10 +15,10 @@ import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
 class WishlistScreen extends StatefulWidget {
-  final String userPhoneNumber;
-  final String userName;
+  String userPhoneNumber;
+  String userName;
 
-  const WishlistScreen({
+  WishlistScreen({
     super.key,
     required this.userPhoneNumber,
     required this.userName,
@@ -41,29 +42,57 @@ class _WishlistScreenState extends State<WishlistScreen> {
   List<DocumentReference> imageUrls = [];
   List<SelectedItem> selectedItems = [];
   bool isLoading = false;
+  String userNumberBefore = '1' ;
 
   @override
   void initState() {
     super.initState();
-    _loadImagesForCategory();
-    print('wishlist ${widget.userPhoneNumber}');
+    getUserDataFromSharedPreferences();
+    if(userNumberBefore != '1') {
+      _loadImagesForCategory();
+    }
+    print('wishlist $userNumberBefore');
+  }
+
+  Future<void> getUserDataFromSharedPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if(widget.userPhoneNumber == '' || widget.userName == '') {
+      print("getUserData ${widget.userPhoneNumber} ${widget.userName}");
+      setState(() {
+        userNumberBefore = prefs.getString('userPhoneNumber')!;
+        widget.userName = prefs.getString('userName')!;
+        print("$userNumberBefore ${widget.userName}");
+      });
+    }
+    else{
+      print("getUserData else ${widget.userPhoneNumber} ${widget.userName}");
+      setState(() {
+        userNumberBefore = widget.userPhoneNumber;
+        print("userNumberBefore : $userNumberBefore");
+      });
+    }
+
+    if(userNumberBefore != '1') {
+      _loadImagesForCategory();
+    }
   }
 
   Stream<QuerySnapshot> getWishlistImagesStream() {
-    if (widget.userPhoneNumber.isEmpty) {
+    print("getWishlistImagesStream : $userNumberBefore");
+    if (userNumberBefore.isEmpty) {
       throw AssertionError('userPhoneNumber cannot be null or empty');
     }
 
     return FirebaseFirestore.instance
         .collection('Wishlist')
-        .doc(widget.userPhoneNumber)
+        .doc(userNumberBefore)
         .collection('Wishlist')
         .snapshots(); // Listen to changes in the collection
   }
 
   void _loadImagesForCategory() {
     final stream = getWishlistImagesStream();
-    print('wishlist ${widget.userPhoneNumber}');
+    print('wishlist $userNumberBefore');
     stream.listen((QuerySnapshot querySnapshot) {
       // This code will be executed whenever there's a change in the Firestore collection.
       final List<DocumentReference> refs = querySnapshot.docs
@@ -192,7 +221,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
       final firestore = FirebaseFirestore.instance;
       final collection = firestore
           .collection('Wishlist')
-          .doc(widget.userPhoneNumber)
+          .doc(userNumberBefore)
           .collection('Wishlist');
 
       final existingDoc = await collection
@@ -220,17 +249,30 @@ class _WishlistScreenState extends State<WishlistScreen> {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 0, 0, 0),
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 0, 0, 0),
-        title: Text(
-          "Wishlist",
-          style: GoogleFonts.rowdies(
-            textStyle: const TextStyle(
-              color: Color.fromARGB(255, 255, 255, 255),
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
+  backgroundColor: const Color.fromARGB(255, 0, 0, 0),
+  title: Builder(
+    builder: (context) {
+      // Retrieve screen width to determine font size
+      double screenWidth = MediaQuery.of(context).size.width;
+
+      // Adjust font size based on screen width
+      double fontSize = screenWidth < 600 
+          ? 16 // Mobile
+          : 27; // Tablet/Desktop
+
+      return Text(
+        "Wishlist",
+        style: GoogleFonts.rowdies(
+          textStyle: TextStyle(
+            color: const Color.fromARGB(255, 255, 255, 255),
+            fontSize: fontSize,
+            fontWeight: FontWeight.bold,
           ),
         ),
+      );
+    },
+  ),
+
         centerTitle: true,
         actions: [
           if (isSelectionMode) ...[
@@ -340,76 +382,84 @@ class _WishlistScreenState extends State<WishlistScreen> {
             ),
           ),
           Positioned(
-            bottom: 80,
-            right: 10,
-            child: Container(
-              child: Column(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(50),
-                    child: FloatingActionButton(
-                      onPressed: () {
-                        const whatsappLink =
-                            'https://wa.me/919247879511?text=Hi%20Balaji%20Jewellers';
-                        launch(whatsappLink);
-                      },
-                      child: Image.network(
-                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSA0W1ZrYWrI28u4z8pNVEdsD-QrbfWPn9QTs1n5amNXYEtxsrYCmsSbfjG6FuW7ZfiOU&usqp=CAU'),
-                    ),
-                  ),
-                  // SizedBox(height: 16),
-                  // FloatingActionButton(
-                  //   onPressed: () {
-                  //     final facebookLink =
-                  //         'https://www.facebook.com/profile.php?id=100054242660344&mibextid=ZbWKwL';
-                  //     launch(facebookLink);
-                  //   },
-                  //   child: Image.asset("assets/images/fb.jpg"),
-                  // ),
-                ],
-              ),
-            ),
-          ),
+  bottom: MediaQuery.of(context).size.width > 600 ?125 : 80, // Responsive bottom position
+  right: MediaQuery.of(context).size.width > 600 ? 50 : 10, // Responsive right position
+  child: Container(
+    height: MediaQuery.of(context).size.width > 600 ? 80 : 60, // Match button height dynamically
+    width: MediaQuery.of(context).size.width > 600 ? 80 : 60, // Match button width dynamically
+    child: RawMaterialButton(
+      onPressed: () {
+        const whatsappLink =
+            'https://wa.me/919247879511?text=Hi%20Balaji%20Jewellers';
+        launch(whatsappLink);
+      },
+      shape: CircleBorder(),
+      fillColor: Colors.white, // Background color of the button
+      constraints: BoxConstraints(
+        minWidth: MediaQuery.of(context).size.width > 600 ? 300 : 80,
+        minHeight: MediaQuery.of(context).size.width > 600 ? 300 : 80,
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(50),
+        child: Image.network(
+          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSA0W1ZrYWrI28u4z8pNVEdsD-QrbfWPn9QTs1n5amNXYEtxsrYCmsSbfjG6FuW7ZfiOU&usqp=CAU',
+          fit: BoxFit.cover,
+        ),
+      ),
+    ),
+  ),
+),
         ],
       ),
     );
   }
+Widget buildGridView(List<DocumentReference<Object?>> imageUrls) {
+  return LayoutBuilder(
+    builder: (context, constraints) {
+      // Determine the number of columns dynamically based on the screen width
+     int crossAxisCount = constraints.maxWidth < 600
+          ? 2 // Mobile phones
+          : constraints.maxWidth < 900
+              ? 3 // Small tablets
+              : 4; // Larger tablets and above
 
-  Widget buildGridView(List<DocumentReference<Object?>> imageUrls) {
-    return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 3,
-        crossAxisSpacing: 3,
-        mainAxisExtent: 270,
-      ),
-      itemCount: imageUrls.length,
-      itemBuilder: (BuildContext context, index) {
-        final documentReference = imageUrls[index];
+      double childAspectRatio = constraints.maxWidth < 600
+          ? 0.7 // Taller items for smaller screens
+          : 0.75; // Wider items for larger screens
+      return GridView.builder(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: crossAxisCount,
+           mainAxisSpacing: MediaQuery.of(context).size.width < 600 ? 5 : 8,
+crossAxisSpacing: MediaQuery.of(context).size.width < 600 ? 5 : 8,
+childAspectRatio: childAspectRatio,
+         
+        ),
+        itemCount: imageUrls.length,
+        itemBuilder: (BuildContext context, index) {
+          final documentReference = imageUrls[index];
 
-        return FutureBuilder<Map<String, dynamic>>(
-          future: _getImageUrlFromReference(documentReference),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState != ConnectionState.done) {
-              return Shimmer.fromColors(
-                baseColor: Colors.grey[300]!,
-                highlightColor: Colors.grey[100]!,
-                child: Container(
-                  width: double.infinity,
-                  height: 200,
-                  color: Colors.white,
-                ),
-              );
-            } else if (snapshot.hasError) {
-              return const Text('Error loading image');
-            } else {
-              final data = snapshot.data;
-              final imageUrl = data?['imageUrl'];
-              final id = data?['id'];
-              final weight = data?['weight'];
-              final isSelected = selectedImages.contains(imageUrl);
-              return Container(
-                child: Card(
+          return FutureBuilder<Map<String, dynamic>>(
+            future: _getImageUrlFromReference(documentReference),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState != ConnectionState.done) {
+                return Shimmer.fromColors(
+                  baseColor: Colors.grey[300]!,
+                  highlightColor: Colors.grey[100]!,
+                  child: Container(
+                    width: double.infinity,
+                    height: 200,
+                    color: Colors.white,
+                  ),
+                );
+              } else if (snapshot.hasError) {
+                return const Text('Error loading image');
+              } else {
+                final data = snapshot.data;
+                final imageUrl = data?['imageUrl'];
+                final id = data?['id'];
+                final weight = data?['weight'];
+                final isSelected = selectedImages.contains(imageUrl);
+                return Card(
                   color: const Color.fromARGB(115, 0, 0, 0),
                   elevation: 4,
                   shape: RoundedRectangleBorder(
@@ -441,15 +491,15 @@ class _WishlistScreenState extends State<WishlistScreen> {
                       });
                     },
                     child: SizedBox(
-                      height: 20,
+                      
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Stack(
                             children: [
                               SizedBox(
-                                height: 185,
-                                width: 190,
+                                height: MediaQuery.of(context).size.height * (MediaQuery.of(context).size.width < 600 ? 0.22 : 0.2),
+                                width: double.infinity,
                                 child: ClipRRect(
                                   borderRadius: const BorderRadius.only(
                                     topLeft: Radius.circular(8.0),
@@ -478,14 +528,15 @@ class _WishlistScreenState extends State<WishlistScreen> {
                               ),
                               if (isSelected)
                                 const Positioned(
-                                  top: 8,
-                                  right: 8,
-                                  child: Icon(
-                                    Icons.check_circle,
-                                    color: Colors.green,
-                                    size: 32,
+                                    top: 8,
+                                    right: 8,
+                                    child: Icon(
+                                      Icons.check_circle,
+                                      color: Colors.green,
+                                      size: 32,
+                                    ),
                                   ),
-                                ),
+
                             ],
                           ),
                           const SizedBox(
@@ -497,7 +548,9 @@ class _WishlistScreenState extends State<WishlistScreen> {
                               children: [
                                 Text(
                                   "Weight : $weight",
-                                  style: const TextStyle(
+                                  style: TextStyle(
+                                    fontSize: MediaQuery.of(context).size.width < 600 ? 14 : 18,
+
                                     fontWeight: FontWeight.w700,
                                     color: Color.fromARGB(172, 255, 255, 255),
                                   ),
@@ -534,14 +587,16 @@ class _WishlistScreenState extends State<WishlistScreen> {
                       ),
                     ),
                   ),
-                ),
-              );
-            }
-          },
-        );
-      },
-    );
-  }
+                );
+              }
+            },
+          );
+        },
+      );
+    },
+  );
+}
+
 
   Future<Map<String, dynamic>> _getImageUrlFromReference(
       DocumentReference reference) async {

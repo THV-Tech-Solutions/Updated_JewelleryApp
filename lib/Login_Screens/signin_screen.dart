@@ -1,10 +1,9 @@
-//login screen
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:jewellery/HelperFunctions/Toast.dart';
 import 'package:jewellery/Login_Screens/userDetailsScreen.dart';
 import 'package:jewellery/Screens/tabs.dart';
@@ -24,32 +23,24 @@ class _LoginScreenState extends State<LoginScreen> {
   String _verificationId = '';
   bool isLoading = false;
   bool otpSent = false;
-  //checking wether the user exist or not
+
   Future<void> checkUserExistOrNot(String userPhoneNumber) async {
-    print('phoneNumber inside existing user check $userPhoneNumber');
     try {
       final CollectionReference usersCollection =
           FirebaseFirestore.instance.collection('users');
 
-      // Query the 'users' collection for the provided phone number
       QuerySnapshot querySnapshot = await usersCollection
           .where('userPhoneNumber', isEqualTo: userPhoneNumber)
           .get();
 
       if (querySnapshot.docs.isNotEmpty) {
-        // If a document with the provided phone number exists, fetch its data
         DocumentSnapshot document = querySnapshot.docs.first;
-        print('Document data: ${document.data()}');
-
         String userPhoneNumber = document['userPhoneNumber'];
         String userName = document['userName'];
         String userCity = document['userCity'];
         String userEmail = document['userEmail'];
         String Admin = document['Admin'];
 
-        // Save user data to SharedPreferences
-
-        // Save user data to SharedPreferences
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('userPhoneNumber', userPhoneNumber);
         await prefs.setString('userEmail', userEmail);
@@ -57,14 +48,11 @@ class _LoginScreenState extends State<LoginScreen> {
         await prefs.setString('userCity', userCity);
         await prefs.setString('Admin', Admin);
 
-        print('User data saved to SharedPreferences');
         Get.offAll(const TabsScreen());
         setState(() {
           isLoading = false;
         });
       } else {
-        // If the phone number does not exist in the 'users' collection, return null
-        print('User not found in Firestore');
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -81,33 +69,25 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         isLoading = false;
       });
-      print('Error fetching user data: $e');
       ToastMessage.toast_("Error : ${e.toString()}");
     }
   }
 
   Future<void> loginWithPhone() async {
     String PhoneNumber = formatPhoneNumber(_phoneNumberCtrl.text);
-    print(PhoneNumber);
     try {
       await FirebaseAuth.instance.verifyPhoneNumber(
         phoneNumber: PhoneNumber,
         timeout: const Duration(seconds: 60),
-        verificationCompleted: (PhoneAuthCredential phoneAuthCredential) {
-          // This callback will be called when the verification is completed automatically
-          // using the auto-retrieval method.
-        },
+        verificationCompleted: (PhoneAuthCredential phoneAuthCredential) {},
         verificationFailed: (FirebaseAuthException authException) {
           setState(() {
             isLoading = false;
           });
-          print('Phone verification failed. Code: ${authException.code}');
-          // Handle the error, e.g., show an error message to the user.
           ToastMessage.toast_(
               "Phone verification failed. Code: ${authException.code}");
         },
         codeSent: (String verificationId, [int? forceResendingToken]) {
-          // verifyOTP(verificationId);
           _verificationId = verificationId;
           if (_verificationId.isNotEmpty) {
             setState(() {
@@ -115,18 +95,13 @@ class _LoginScreenState extends State<LoginScreen> {
               isLoading = false;
             });
           }
-          print('verificationId : $verificationId');
-          print('_verificationId : $_verificationId');
         },
-        codeAutoRetrievalTimeout: (String verificationId) {
-          // Auto retrieval timeout, handle the situation here
-        },
+        codeAutoRetrievalTimeout: (String verificationId) {},
       );
     } catch (e) {
       setState(() {
         isLoading = false;
       });
-      print('Error sending OTP: $e');
       ToastMessage.toast_(e.toString());
     }
   }
@@ -145,26 +120,21 @@ class _LoginScreenState extends State<LoginScreen> {
             await FirebaseAuth.instance.signInWithCredential(credential);
 
         if (userCredential.user != null) {
-          // If OTP is verified successfully, navigate to the next screen
-          // ignore: use_build_context_synchronously
           await checkUserExistOrNot(PhoneNumber);
         } else {
           setState(() {
             isLoading = false;
           });
-          print('Error verifying OTP');
           ToastMessage.toast_("InCorrect OTP!");
         }
       } else {
         setState(() {
           isLoading = false;
         });
-        print("Sending OTP failed");
         ToastMessage.toast_(
             "Oops!. Sending the OTP failed. Please try after some time.");
       }
     } catch (e) {
-      print('Error verifying OTP: $e');
       ToastMessage.toast_("Error verifying OTP: ${e.toString()}");
       setState(() {
         isLoading = false;
@@ -173,7 +143,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   String formatPhoneNumber(String phoneNumber) {
-    // Remove any non-numeric characters
     phoneNumber = phoneNumber.replaceAll(RegExp(r'[^0-9]'), '');
 
     if (!phoneNumber.startsWith('91')) {
@@ -184,193 +153,140 @@ class _LoginScreenState extends State<LoginScreen> {
       phoneNumber = '91$phoneNumber';
     }
 
-    // Check if the number starts with a leading plus (+)
     if (!phoneNumber.startsWith('+')) {
-      // Add the leading plus for international format
       phoneNumber = '+$phoneNumber';
     }
-    print('phoneNumber : $phoneNumber');
     return phoneNumber;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Scaffold(
-        backgroundColor: Colors.grey[300],
-        body: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.all(25),
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
+
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: Container(
+        decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color.fromARGB(255, 0, 0, 0),
+                  Color.fromARGB(139, 96, 67, 6)
+                ], // Black to Gold gradient
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+        height: double.infinity, // Ensure background color covers the full screen
+        
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.all(width > 600 ? 50 : 25),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(height: 70),
-                Container(
-                  width: 150,
-                  height: 150,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      image: AssetImage("assets/images/logo.png"),
-                      fit: BoxFit.cover,
+                SizedBox(height: height * 0.1),
+                Center(
+                  child: Container(
+                    width: width > 600 ? 200 : 150,
+                    height: width > 600 ? 200 : 150,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.orangeAccent.withOpacity(0.5),
+                          spreadRadius: 10,
+                          blurRadius: 20,
+                        ),
+                      ],
+                      image: const DecorationImage(
+                        image: AssetImage("assets/images/logo.png"),
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 50),
+                SizedBox(height: height * 0.05),
                 Card(
-                  elevation: 10,
+                  color: const Color.fromARGB(255, 18, 18, 18),
+                  elevation: 20,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(25),
                   ),
-                  color: Colors.white,
                   child: Padding(
-                    padding: const EdgeInsets.all(20),
+                    padding: EdgeInsets.all(width > 600 ? 40 : 20),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        const Text(
+                        Text(
                           "Verification",
                           textAlign: TextAlign.center,
-                          style: TextStyle(
+                          style: GoogleFonts.marcellusSc(
                             fontSize: 25,
                             fontWeight: FontWeight.bold,
                             color: Colors.orangeAccent,
-                            fontFamily: 'Roboto',
                           ),
                         ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        if (!showOTPField) ...[
-                          const Text(
-                            "We'll send you a one-time code to your phone number",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                              fontFamily: 'Roboto',
-                            ),
-                          ),
-                        ],
-                        if (showOTPField) ...[
-                          const Text(
-                            "Enter OTP to register or Login",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                              fontFamily: 'Roboto',
-                            ),
-                          ),
-                        ],
-                        const SizedBox(height: 25),
+                        SizedBox(height: height * 0.02),
                         _buildTextFormField(
                           labelText: "Enter Phone Number",
                           prefixIcon: Icons.phone,
                           keyboardType: TextInputType.phone,
                           controller: _phoneNumberCtrl,
                         ),
-
-                        // Phone number input end
-
-                        if (otpSent) ...[
-                          Column(
-                            children: [
-                              const SizedBox(height: 15),
-                              _buildTextFormField(
-                                labelText: "OTP",
-                                prefixIcon: Icons.security,
-                                keyboardType: TextInputType.number,
-                                controller: _otpCtrl,
-                              ),
-                              const SizedBox(height: 20),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.orangeAccent,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 50, vertical: 15),
-                                ),
-                                child: isLoading // Check the loading variable
-                                    ? const CircularProgressIndicator() // Show loading indicator
-                                    : const Text(
-                                        "Verify OTP",
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                onPressed: () {
-                                  if (_otpCtrl.text.length == 6) {
-                                    setState(() {
-                                      isLoading = true; // Set loading to true
-                                    });
-                                    verifyOTP(_otpCtrl.text);
-                                    FocusScope.of(context).unfocus();
-                                  } else {
-                                    Fluttertoast.showToast(
-                                      msg:
-                                          "You entered ${_otpCtrl.text.length} digits of OTP only; please enter 6 digits of OTP.",
-                                      toastLength: Toast
-                                          .LENGTH_SHORT, // Duration for the toast message
-                                      gravity: ToastGravity
-                                          .BOTTOM, // Position of the toast message
-                                      backgroundColor: Colors
-                                          .red, // Background color of the toast
-                                      textColor: Colors
-                                          .white, // Text color of the toast
-                                      fontSize:
-                                          16.0, // Font size of the toast text
-                                    );
-                                  }
-                                },
-                              ),
-                            ],
+                        if (otpSent)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 20),
+                            child: _buildTextFormField(
+                              labelText: "Enter OTP",
+                              prefixIcon: Icons.security,
+                              keyboardType: TextInputType.number,
+                              controller: _otpCtrl,
+                            ),
                           ),
-                        ] else ...[
-                          Column(
-                            // Wrap the else block in a Column
-                            children: [
-                              const SizedBox(height: 20),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.orangeAccent,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 50, vertical: 15),
-                                ),
-                                child: isLoading // Check the loading variable
-                                    ? const CircularProgressIndicator() // Show loading indicator
-                                    : const Text(
-                                        "Send OTP",
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                onPressed: () {
-                                  setState(() {
-                                    isLoading = true; // Set loading to true
-                                  });
-                                  loginWithPhone();
-                                  setState(() {
-                                    showOTPField = true;
-                                  });
-                                },
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                            ],
+                        SizedBox(height: height * 0.03),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color.fromARGB(175, 251, 146, 0),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                              vertical: height > 600 ? 18 : 15,
+                              horizontal: width > 600 ? 80 : 50,
+                            ),
+                            shadowColor: Colors.orange.withOpacity(0.6),
+                            elevation: 10,
                           ),
-                        ]
+                          child: isLoading
+                              ? const CircularProgressIndicator()
+                              : Text(
+                                  otpSent ? "Verify OTP" : "Send OTP",
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                          onPressed: () {
+                            if (otpSent) {
+                              if (_otpCtrl.text.length == 6) {
+                                setState(() {
+                                  isLoading = true;
+                                });
+                                verifyOTP(_otpCtrl.text);
+                              } else {
+                                Fluttertoast.showToast(
+                                  msg: "Enter a valid OTP",
+                                  gravity: ToastGravity.BOTTOM,
+                                );
+                              }
+                            } else {
+                              setState(() {
+                                isLoading = true;
+                              });
+                              loginWithPhone();
+                            }
+                          },
+                        ),
                       ],
                     ),
                   ),
@@ -390,24 +306,36 @@ class _LoginScreenState extends State<LoginScreen> {
     required TextEditingController controller,
     TextInputType? keyboardType,
   }) {
-    return TextFormField(
-      style: TextStyle(color: Colors.grey[800]),
-      obscureText: obscureText,
-      keyboardType: keyboardType,
-      controller: controller,
-      decoration: InputDecoration(
-        filled: true,
-        fillColor: Colors.grey[200],
-        focusedBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: Colors.orangeAccent, width: 2.0),
-          borderRadius: BorderRadius.circular(10),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: TextFormField(
+        controller: controller,
+        obscureText: obscureText,
+        keyboardType: keyboardType,
+        style: const TextStyle(color: Colors.white),
+        decoration: InputDecoration(
+          filled: true,
+          labelStyle: TextStyle(color: Colors.white60), // Light label color
+          fillColor: const Color.fromARGB(255, 6, 6, 6),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.transparent),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.white, width: 1),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.transparent),
+          ),
+          disabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.transparent),
+          ),
+          labelText: labelText,
+          prefixIcon: Icon(prefixIcon, color: Colors.orangeAccent),
         ),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.grey[400]!, width: 2.0),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        labelText: labelText,
-        prefixIcon: Icon(prefixIcon, color: Colors.grey[800]),
       ),
     );
   }

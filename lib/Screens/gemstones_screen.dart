@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jewellery/Screens/common_screen.dart';
@@ -37,28 +36,22 @@ class _GemStonesScreenState extends State<GemStonesScreen> {
       'Rudrakshalu',
       'Spatikalu',
       'Semi Freshes',
-      'Rudrakshalu',
-      'Spatikalu',
-      'Semi Freshes',
-      'Rudrakshalu',
-      'Spatikalu',
-      'Semi Freshes',
     ],
   ];
 
   final Map<String, String> itemImages = {
-    'Kempu': 'https://link_to_image1.png',
-    'Diamond': 'https://link_to_image2.png',
-    'Blue Safare': 'https://link_to_image3.png',
-    'Yellow Safare': 'https://link_to_image4.png',
-    'Hessonite': 'https://link_to_image5.png',
-    'Cats Eye': 'https://link_to_image6.png',
-    'Paral': 'https://link_to_image7.png',
-    'Koral': 'https://link_to_image8.png',
-    'Emerold': 'https://link_to_image9.png',
-    'Rudrakshalu': 'https://link_to_image10.png',
-    'Spatikalu': 'https://link_to_image11.png',
-    'Semi Freshes': 'https://link_to_image12.png',
+    'Kempu': 'assets/images/Gemstone1.png',
+    'Diamond': 'assets/images/Gemstone2.png',
+    'Blue Safare': 'assets/images/Gemstone3.png',
+    'Yellow Safare': 'assets/images/Gemstone4.png',
+    'Hessonite': 'assets/images/Gemstone5.png',
+    'Cats Eye': 'assets/images/Gemstone6.png',
+    'Paral': 'assets/images/Gemstone7.png',
+    'Koral': 'assets/images/Gemstone8.png',
+    'Emerold': 'assets/images/Gemstone9.png',
+    'Rudrakshalu': 'assets/images/Gemstone10.png',
+    'Spatikalu': 'assets/images/Gemstone11.png',
+    'Semi Freshes': 'assets/images/Gemstone12.png',
   };
 
   void scrollToCategory(String category) {
@@ -132,7 +125,7 @@ class _GemStonesScreenState extends State<GemStonesScreen> {
               gradient: LinearGradient(
                 colors: [
                   Color.fromARGB(255, 0, 0, 0),
-                  Color.fromARGB(255 , 58, 40, 0)
+                  Color.fromARGB(255, 58, 40, 0)
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -239,7 +232,7 @@ class _GemStonesScreenState extends State<GemStonesScreen> {
                                       color: Colors.black,
                                       borderRadius: BorderRadius.circular(16.0),
                                       image: DecorationImage(
-                                        image: CachedNetworkImageProvider(
+                                        image: AssetImage(
                                           itemImages[categoriesForTitles[currentTabIndex][itemIndex]]!,
                                         ),
                                         fit: BoxFit.contain,
@@ -299,7 +292,7 @@ class CustomSearchDelegate extends SearchDelegate<String> {
   @override
   List<Widget> buildActions(BuildContext context) {
     return [
- IconButton(
+      IconButton(
         onPressed: () {
           query = '';
         },

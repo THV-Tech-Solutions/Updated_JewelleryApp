@@ -1,5 +1,3 @@
-//WelcomeScreen final
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jewellery/Login_Screens/signin_screen.dart';
@@ -18,8 +16,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Screen dimensions
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+      backgroundColor: Colors.black87,
       body: Stack(
         alignment: Alignment.bottomCenter,
         children: [
@@ -35,42 +37,46 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 image: 'assets/images/bb1.png',
                 title: Constants.titleOne,
                 description: Constants.descriptionOne,
+                screenHeight: screenHeight,
+                screenWidth: screenWidth,
               ),
               createPage(
                 image: 'assets/images/yy1.png',
                 title: Constants.titleTwo,
                 description: Constants.descriptionTwo,
+                screenHeight: screenHeight,
+                screenWidth: screenWidth,
               ),
               createPage(
                 image: 'assets/images/first-e.png',
                 title: Constants.titleThree,
                 description: Constants.descriptionThree,
+                screenHeight: screenHeight,
+                screenWidth: screenWidth,
               ),
             ],
           ),
           Positioned(
-            bottom: 80,
-            left: 30,
+            bottom: screenHeight * 0.12,
+            left: screenWidth * 0.1,
             child: Row(
-              children: _buildIndicator(),
+              children: _buildIndicator(screenWidth),
             ),
           ),
           Positioned(
-            bottom: 60,
-            right: 30,
+            bottom: screenHeight * 0.1,
+            right: screenWidth * 0.1,
             child: GestureDetector(
-              onTap: () {
-                _nextPage();
-              },
+              onTap: () => _nextPage(),
               child: Container(
-                padding: const EdgeInsets.all(12),
+                padding: EdgeInsets.all(screenWidth * 0.03),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: Constants.primaryColor,
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.arrow_forward_ios,
-                  size: 24,
+                  size: screenWidth * 0.05,
                   color: Colors.white,
                 ),
               ),
@@ -89,7 +95,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         curve: Curves.easeIn,
       );
     } else {
-      // Clear SharedPreferences data before navigating to LoginScreen
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('userPhoneNumber');
       await prefs.remove('Admin');
@@ -101,25 +106,22 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     }
   }
 
-  List<Widget> _buildIndicator() {
-    List<Widget> indicators = [];
-
-    for (int i = 0; i < 3; i++) {
-      indicators.add(_indicator(i == currentIndex));
-    }
-
-    return indicators;
+  List<Widget> _buildIndicator(double screenWidth) {
+    return List<Widget>.generate(
+      3,
+      (index) => _indicator(index == currentIndex, screenWidth),
+    );
   }
 
-  Widget _indicator(bool isActive) {
+  Widget _indicator(bool isActive, double screenWidth) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
-      height: 10.0,
-      width: isActive ? 20 : 8,
-      margin: const EdgeInsets.only(right: 5.0),
+      height: screenWidth * 0.02,
+      width: isActive ? screenWidth * 0.05 : screenWidth * 0.02,
+      margin: EdgeInsets.only(right: screenWidth * 0.02),
       decoration: BoxDecoration(
-        color: isActive ? Constants.primaryColor : Colors.blueGrey,
-        borderRadius: BorderRadius.circular(5),
+        color: isActive ? Constants.primaryColor : Colors.grey[700],
+        borderRadius: BorderRadius.circular(screenWidth * 0.01),
       ),
     );
   }
@@ -129,65 +131,79 @@ class createPage extends StatelessWidget {
   final String image;
   final String title;
   final String description;
+  final double screenHeight;
+  final double screenWidth;
 
   const createPage({
     super.key,
     required this.image,
     required this.title,
     required this.description,
+    required this.screenHeight,
+    required this.screenWidth,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 80),
+      decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color.fromARGB(255, 0, 0, 0),
+                  Color.fromARGB(139, 96, 67, 6)
+                ], // Black to Gold gradient
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+      padding: EdgeInsets.symmetric(
+        horizontal: screenWidth * 0.1,
+        vertical: screenHeight * 0.1,
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Image.asset(image, height: 200), // Adjust the height as needed
-          const SizedBox(height: 40),
+          Image.asset(
+            image,
+            height: screenHeight * 0.3,
+          ),
+          SizedBox(height: screenHeight * 0.05),
           Text(
             title,
             textAlign: TextAlign.center,
-            style: GoogleFonts.fraunces(
-              // You can replace 'Lato' with your desired Google Font
+            style: GoogleFonts.cinzelDecorative(
               textStyle: TextStyle(
                 color: Constants.primaryColor,
-                fontSize: 26, // Adjusted font size
+                fontSize: screenWidth * 0.05,
                 fontWeight: FontWeight.bold,
                 decoration: TextDecoration.none,
                 shadows: [
                   Shadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 2,
-                    offset: const Offset(2, 2),
+                    color: Colors.black.withOpacity(0.5),
+                    blurRadius: 10,
+                    offset: Offset(screenWidth * 0.01, screenWidth * 0.01),
                   ),
                 ],
               ),
             ),
           ),
-
-          const SizedBox(height: 20),
+          SizedBox(height: screenHeight * 0.03),
           Text(
             description,
-            textAlign: TextAlign.center, // Aligns text horizontally to center
-            style: GoogleFonts.acme(
-              //merienda
-              fontSize: 20,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.marcellusSc(
+              fontSize: screenWidth * 0.040,
               fontWeight: FontWeight.normal,
-              color: Colors.black87,
-              fontStyle: FontStyle.normal,
+              color: const Color.fromARGB(255, 162, 162, 162),
               shadows: [
                 Shadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 2,
-                  offset: const Offset(1, 1),
+                  color: Colors.black.withOpacity(0.3),
+                  blurRadius: 5,
+                  offset: Offset(screenWidth * 0.005, screenWidth * 0.005),
                 ),
               ],
             ),
           ),
-
-          const SizedBox(height: 40),
         ],
       ),
     );
@@ -195,11 +211,9 @@ class createPage extends StatelessWidget {
 }
 
 class Constants {
-  // Primary color
-  static var primaryColor = Colors.orangeAccent; // A richer primary color
+  static var primaryColor = Colors.orangeAccent;
   static var blackColor = Colors.black54;
 
-  // Onboarding texts
   static var titleOne = "Explore Our Shiny Jewelry";
   static var descriptionOne =
       "Check out beautiful gold, silver, diamond, rose gold, and gemstone pieces. We make them sparkle just for you.";

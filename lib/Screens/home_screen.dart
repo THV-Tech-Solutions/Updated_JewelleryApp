@@ -132,15 +132,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // Responsive settings for GridView
     int crossAxisCount = tablet ? 3 : 3; // More columns for tablets
-    double mainAxisSpacing = tablet ? 16 : 12;
+    double mainAxisSpacing = tablet ? 20 : 12;
     double crossAxisSpacing = tablet ? 20 : 10;
-    double childAspectRatio = tablet ? (180 / 260) : (180 / 260);
+    double childAspectRatio = tablet ? (180 / 240) : (180 / 260);
 
     // Responsive properties of poster1
     final isTablet1 = screenWidth > 600;
     double containerHeight =
         isTablet1 ? screenHeight * 0.15 : screenHeight * 0.12;
-    double topMargin = isTablet1 ? 80.0 : 40.0;
+    double topMargin = isTablet1 ? 40.0 : 40.0;
 
     // Responsive properties of scrollable posters
     double containerheight =
@@ -178,8 +178,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: logoSize,
                 child: Image.asset(
                   'assets/images/logo9.png',
-                  width: logoSize * 0.84, // 84% of logo size
-                  height: logoSize * 0.84,
+                  width: logoSize * 0.80, // 84% of logo size
+                  height: logoSize * 0.80,
                 ),
               ),
             ),
@@ -187,25 +187,48 @@ class _HomeScreenState extends State<HomeScreen> {
             Expanded(
               child: Center(
                 child: Text(
-                  "Sri Balaji Jewelers",
-                  style: GoogleFonts.mateSc(
-                    fontSize: titleFontSize,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 1,
-                    shadows: [
-                      const Shadow(
-                        offset: Offset(3, 3),
-                        blurRadius: 7,
-                        color: Colors.black,
-                      ),
-                    ],
-                    decoration: TextDecoration.none,
-                    foreground: Paint()
-                      ..shader = const LinearGradient(
-                        colors: [Colors.orange, Colors.orange],
-                      ).createShader(
-                          const Rect.fromLTWH(0.0, 0.0, 200.0, 30.0)),
-                  ),
+                  MediaQuery.of(context).size.width > 600
+                      ? "Sri Balaji Jewellers"
+                      : "SriBalajiJewelers",
+                  style: MediaQuery.of(context).size.width > 600
+                      ? GoogleFonts.cinzelDecorative(
+                          //cinzelDecorative, marcellusSc, bonaNova, spectralSc, cormorantSc
+                          fontSize: 30,
+                          fontWeight: FontWeight.w900,
+                          // color: Colors.orangeAccent,
+                          letterSpacing: 1,
+                          shadows: [
+                            const Shadow(
+                              offset: Offset(3, 3),
+                              blurRadius: 7,
+                              color: Colors.black,
+                            ),
+                          ],
+                          decoration: TextDecoration.none,
+                          foreground: Paint()
+                            ..shader = const LinearGradient(
+                              colors: [Colors.orange, Colors.orange],
+                            ).createShader(
+                                const Rect.fromLTWH(0.0, 0.0, 200.0, 30.0)),
+                        )
+                      : GoogleFonts.mateSc(
+                          fontSize: titleFontSize,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1,
+                          shadows: [
+                            const Shadow(
+                              offset: Offset(3, 3),
+                              blurRadius: 7,
+                              color: Colors.black,
+                            ),
+                          ],
+                          decoration: TextDecoration.none,
+                          foreground: Paint()
+                            ..shader = const LinearGradient(
+                              colors: [Colors.orange, Colors.orange],
+                            ).createShader(
+                                const Rect.fromLTWH(0.0, 0.0, 200.0, 30.0)),
+                        ),
                 ),
               ),
             ),
@@ -223,29 +246,45 @@ class _HomeScreenState extends State<HomeScreen> {
                   onTap: () {
                     Get.to(const ProfileScreen());
                   },
+                  // child: Padding(
+                  //   padding: const EdgeInsets.all(3),
+                  //   child: ClipRRect(
+                  //     borderRadius: BorderRadius.circular(20),
+                  //     child: Image.network(
+                  //       'https://cdn-icons-png.freepik.com/512/10302/10302971.png',
+                  //       width: profileImageSize,
+                  //       height: profileImageSize,
+                  //       fit: BoxFit.cover,
+                  //       loadingBuilder: (BuildContext context, Widget child,
+                  //           ImageChunkEvent? loadingProgress) {
+                  //         if (loadingProgress == null) {
+                  //           return child;
+                  //         }
+                  //         return Center(
+                  //           child: CircularProgressIndicator(
+                  //             value: loadingProgress.expectedTotalBytes != null
+                  //                 ? loadingProgress.cumulativeBytesLoaded /
+                  //                     (loadingProgress.expectedTotalBytes ?? 1)
+                  //                 : null,
+                  //           ),
+                  //         );
+                  //       },
+                  //       errorBuilder: (BuildContext context, Object exception,
+                  //           StackTrace? stackTrace) {
+                  //         return const Icon(Icons.error);
+                  //       },
+                  //     ),
+                  //   ),
+                  // ),
                   child: Padding(
                     padding: const EdgeInsets.all(3),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20),
-                      child: Image.network(
-                        'https://cdn-icons-png.freepik.com/512/10302/10302971.png',
+                      child: Image.asset(
+                        'assets/images/profileimage.png', // Update with your asset path
                         width: profileImageSize,
                         height: profileImageSize,
                         fit: BoxFit.cover,
-                        loadingBuilder: (BuildContext context, Widget child,
-                            ImageChunkEvent? loadingProgress) {
-                          if (loadingProgress == null) {
-                            return child;
-                          }
-                          return Center(
-                            child: CircularProgressIndicator(
-                              value: loadingProgress.expectedTotalBytes != null
-                                  ? loadingProgress.cumulativeBytesLoaded /
-                                      (loadingProgress.expectedTotalBytes ?? 1)
-                                  : null,
-                            ),
-                          );
-                        },
                         errorBuilder: (BuildContext context, Object exception,
                             StackTrace? stackTrace) {
                           return const Icon(Icons.error);
@@ -279,91 +318,123 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Padding(
-  padding: EdgeInsets.symmetric(
-    horizontal: MediaQuery.of(context).size.shortestSide >= 600
-        ? MediaQuery.of(context).size.width * 0.08// 10% for tablets
-        : MediaQuery.of(context).size.width * 0.05, // 5% for phones
-  ),
-  child: Material(
-    borderRadius: BorderRadius.circular(30),
-    elevation: 2,
-    child: Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: MediaQuery.of(context).size.shortestSide >= 600
-            ? MediaQuery.of(context).size.width * 0.01 // 4% for tablets
-            : MediaQuery.of(context).size.width * 0.02, // 2% for phones
-      ),
-      decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 0, 0, 0),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: const Color.fromARGB(255, 255, 255, 255),
-          width: 1.0,
-        ),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              onTap: () {
-                _focusNode.unfocus();
-                Get.to(const SearchScreen());
-              },
-              style: TextStyle(
-                fontSize: MediaQuery.of(context).size.shortestSide >= 600
-                    ? MediaQuery.of(context).size.width * 0.03 // Larger font for tablets
-                    : MediaQuery.of(context).size.width * 0.04, // Smaller font for phones
-                color: const Color.fromARGB(255, 255, 255, 255),
-              ),
-              decoration: InputDecoration(
-                hintText: "Search for Ornaments",
-                hintStyle: TextStyle(
-                  fontSize: MediaQuery.of(context).size.shortestSide >= 600
-                      ? MediaQuery.of(context).size.width * 0.025 // Larger hint font for tablets
-                      : MediaQuery.of(context).size.width * 0.035, // Smaller hint font for phones
-                  color: const Color.fromARGB(255, 218, 218, 218),
-                ),
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.only(
-                  left: MediaQuery.of(context).size.shortestSide >= 600
-                      ? MediaQuery.of(context).size.width * 0.05 // Extra padding for tablets
-                      : MediaQuery.of(context).size.width * 0.04, // Standard padding for phones
-                ),
-              ),
-              focusNode: _focusNode,
-            ),
-          ),
-          IconButton(
-            onPressed: () {
-              _showUnderDevelopmentMessage();
-            },
-            icon: const Icon(Icons.mic),
-            iconSize: MediaQuery.of(context).size.shortestSide >= 600
-                ? MediaQuery.of(context).size.width * 0.04 // Larger icon for tablets
-                : MediaQuery.of(context).size.width * 0.06, // Smaller icon for phones
-            color: const Color.fromARGB(221, 255, 255, 255),
-          ),
-          IconButton(
-            onPressed: () {
-              _showUnderDevelopmentMessage();
-            },
-            icon: const Icon(Icons.settings),
-            iconSize: MediaQuery.of(context).size.shortestSide >= 600
-                ? MediaQuery.of(context).size.width * 0.04 // Larger icon for tablets
-                : MediaQuery.of(context).size.width * 0.06, // Smaller icon for phones
-            color: const Color.fromARGB(221, 255, 255, 255),
-          ),
-        ],
-      ),
-    ),
-  ),
-),
-
+                      padding: EdgeInsets.symmetric(
+                        horizontal:
+                            MediaQuery.of(context).size.shortestSide >= 600
+                                ? MediaQuery.of(context).size.width *
+                                    0.03 // 10% for tablets
+                                : MediaQuery.of(context).size.width *
+                                    0.05, // 5% for phones
+                      ),
+                      child: Material(
+                        borderRadius: BorderRadius.circular(30),
+                        elevation: 2,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal:
+                                MediaQuery.of(context).size.shortestSide >= 600
+                                    ? MediaQuery.of(context).size.width *
+                                        0.01 // 4% for tablets
+                                    : MediaQuery.of(context).size.width *
+                                        0.02, // 2% for phones
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color.fromARGB(255, 0, 0, 0),
+                            borderRadius: BorderRadius.circular(15),
+                            border: Border.all(
+                              color: const Color.fromARGB(255, 255, 255, 255),
+                              width: 0.5,
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  onTap: () {
+                                    _focusNode.unfocus();
+                                    Get.to(const SearchScreen());
+                                  },
+                                  style: TextStyle(
+                                    fontSize: MediaQuery.of(context)
+                                                .size
+                                                .shortestSide >=
+                                            600
+                                        ? MediaQuery.of(context).size.width *
+                                            0.03 // Larger font for tablets
+                                        : MediaQuery.of(context).size.width *
+                                            0.04, // Smaller font for phones
+                                    color: const Color.fromARGB(
+                                        255, 255, 255, 255),
+                                  ),
+                                  decoration: InputDecoration(
+                                    hintText: "Search for Ornaments",
+                                    hintStyle: TextStyle(
+                                      fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .shortestSide >=
+                                              600
+                                          ? MediaQuery.of(context).size.width *
+                                              0.025 // Larger hint font for tablets
+                                          : MediaQuery.of(context).size.width *
+                                              0.035, // Smaller hint font for phones
+                                      color: const Color.fromARGB(
+                                          185, 218, 218, 218),
+                                    ),
+                                    border: InputBorder.none,
+                                    contentPadding: EdgeInsets.only(
+                                      left: MediaQuery.of(context)
+                                                  .size
+                                                  .shortestSide >=
+                                              600
+                                          ? MediaQuery.of(context).size.width *
+                                              0.05 // Extra padding for tablets
+                                          : MediaQuery.of(context).size.width *
+                                              0.04, // Standard padding for phones
+                                    ),
+                                  ),
+                                  focusNode: _focusNode,
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  _showUnderDevelopmentMessage();
+                                },
+                                icon: const Icon(Icons.mic),
+                                iconSize:
+                                    MediaQuery.of(context).size.shortestSide >=
+                                            600
+                                        ? MediaQuery.of(context).size.width *
+                                            0.04 // Larger icon for tablets
+                                        : MediaQuery.of(context).size.width *
+                                            0.06, // Smaller icon for phones
+                                color: const Color.fromARGB(194, 255, 255, 255),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  _showUnderDevelopmentMessage();
+                                },
+                                icon: const Icon(Icons.settings),
+                                iconSize:
+                                    MediaQuery.of(context).size.shortestSide >=
+                                            600
+                                        ? MediaQuery.of(context).size.width *
+                                            0.04 // Larger icon for tablets
+                                        : MediaQuery.of(context).size.width *
+                                            0.06, // Smaller icon for phones
+                                color: const Color.fromARGB(189, 255, 255, 255),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
                     const SizedBox(height: 25),
                     CustomCarouselSlider(images: images),
                     const SizedBox(height: 15),
                     Padding(
-                      padding: EdgeInsets.all(tablet ? 20.0 : 16.0),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: tablet ? 50.0 : 16.0,
+                          vertical: tablet ? 10.0 : 16.0),
                       child: GridView.count(
                         crossAxisCount:
                             crossAxisCount, // Responsive column count
@@ -689,8 +760,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 25),
-                    
-                       height:MediaQuery.of(context).size.width > 600 ?screenHeight * 0.1 : screenHeight * 0.1,
+                      height: MediaQuery.of(context).size.width > 600
+                          ? screenHeight * 0.1
+                          : screenHeight * 0.1,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
@@ -708,11 +780,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                 borderRadius: BorderRadius.circular(
                                     50), // To keep the ripple effect circular
                                 onTap: () {
-                                  // Handle tap
+                                  //tap facebook
+                                  final whatsappLink =
+                                      'https://www.facebook.com/profile.php?id=100054242660344&mibextid=ZbWKwL';
+                                  launch(whatsappLink);
                                 },
                                 child: Container(
-                                  height: MediaQuery.of(context).size.width > 600 ?screenHeight * 0.06 : screenHeight * 0.07,
-                                  width: MediaQuery.of(context).size.width > 600 ?screenHeight * 0.06 : screenHeight * 0.07,
+                                  height:
+                                      MediaQuery.of(context).size.width > 600
+                                          ? screenHeight * 0.06
+                                          : screenHeight * 0.07,
+                                  width: MediaQuery.of(context).size.width > 600
+                                      ? screenHeight * 0.06
+                                      : screenHeight * 0.07,
                                   child: const Padding(
                                     padding: EdgeInsets.all(
                                         8.0), // Adds padding around the logo to give button-like feel
@@ -744,8 +824,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                   // Handle tap
                                 },
                                 child: Container(
-                                  height: MediaQuery.of(context).size.width > 600 ?screenHeight * 0.06 : screenHeight * 0.07,
-                                  width: MediaQuery.of(context).size.width > 600 ?screenHeight * 0.06 : screenHeight * 0.07,
+                                  height:
+                                      MediaQuery.of(context).size.width > 600
+                                          ? screenHeight * 0.06
+                                          : screenHeight * 0.07,
+                                  width: MediaQuery.of(context).size.width > 600
+                                      ? screenHeight * 0.06
+                                      : screenHeight * 0.07,
                                   child: const Padding(
                                     padding: EdgeInsets.all(
                                         8.0), // Adds padding around the logo
@@ -777,8 +862,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                   // Handle tap
                                 },
                                 child: Container(
-                                  height: MediaQuery.of(context).size.width > 600 ?screenHeight * 0.06 : screenHeight * 0.07,
-                                  width: MediaQuery.of(context).size.width > 600 ?screenHeight * 0.06 : screenHeight * 0.07,
+                                  height:
+                                      MediaQuery.of(context).size.width > 600
+                                          ? screenHeight * 0.06
+                                          : screenHeight * 0.07,
+                                  width: MediaQuery.of(context).size.width > 600
+                                      ? screenHeight * 0.06
+                                      : screenHeight * 0.07,
                                   child: const Padding(
                                     padding: EdgeInsets.all(
                                         8.0), // Adds padding around the logo
@@ -807,34 +897,41 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           Positioned(
-  bottom: MediaQuery.of(context).size.width > 600 ?125 : 80, // Responsive bottom position
-  right: MediaQuery.of(context).size.width > 600 ? 50 : 10, // Responsive right position
-  child: Container(
-    height: MediaQuery.of(context).size.width > 600 ? 80 : 60, // Match button height dynamically
-    width: MediaQuery.of(context).size.width > 600 ? 80 : 60, // Match button width dynamically
-    child: RawMaterialButton(
-      onPressed: () {
-        const whatsappLink =
-            'https://wa.me/919247879511?text=Hi%20Balaji%20Jewellers';
-        launch(whatsappLink);
-      },
-      shape: CircleBorder(),
-      fillColor: Colors.white, // Background color of the button
-      constraints: BoxConstraints(
-        minWidth: MediaQuery.of(context).size.width > 600 ? 300 : 80,
-        minHeight: MediaQuery.of(context).size.width > 600 ? 300 : 80,
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(50),
-        child: Image.network(
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSA0W1ZrYWrI28u4z8pNVEdsD-QrbfWPn9QTs1n5amNXYEtxsrYCmsSbfjG6FuW7ZfiOU&usqp=CAU',
-          fit: BoxFit.cover,
-        ),
-      ),
-    ),
-  ),
-),
-
+            bottom: MediaQuery.of(context).size.width > 600
+                ? 125
+                : 80, // Responsive bottom position
+            right: MediaQuery.of(context).size.width > 600
+                ? 50
+                : 10, // Responsive right position
+            child: Container(
+              height: MediaQuery.of(context).size.width > 600
+                  ? 80
+                  : 60, // Match button height dynamically
+              width: MediaQuery.of(context).size.width > 600
+                  ? 80
+                  : 60, // Match button width dynamically
+              child: RawMaterialButton(
+                onPressed: () {
+                  const whatsappLink =
+                      'https://wa.me/919247879511?text=Hi%20Balaji%20Jewellers';
+                  launch(whatsappLink);
+                },
+                shape: CircleBorder(),
+                fillColor: Colors.white, // Background color of the button
+                constraints: BoxConstraints(
+                  minWidth: MediaQuery.of(context).size.width > 600 ? 300 : 80,
+                  minHeight: MediaQuery.of(context).size.width > 600 ? 300 : 80,
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(50),
+                  child: Image.network(
+                    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSA0W1ZrYWrI28u4z8pNVEdsD-QrbfWPn9QTs1n5amNXYEtxsrYCmsSbfjG6FuW7ZfiOU&usqp=CAU',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -862,10 +959,10 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
     final tablet = isTablet(context);
 
     // Responsive settings
-    double carouselHeight = screenHeight * (tablet ? 0.28 : 0.23);
-    double dotSize = tablet ? 10.0 : 8.0;
+    double carouselHeight = screenHeight * (tablet ? 0.25 : 0.23);
+    double dotSize = tablet ? 8.0 : 8.0;
     double dotSpacing = tablet ? 8.0 : 5.0;
-    double viewportFraction = tablet ? 0.8 : 0.8;
+    double viewportFraction = tablet ? 0.75 : 0.8;
     double aspectRatio = tablet ? 3 / 2 : 4 / 3;
     return Column(
       children: [
@@ -1011,8 +1108,8 @@ class _CategoryCardState extends State<CategoryCard> {
                     ],
                   ),
                   border: Border.all(
-                    color: const Color.fromARGB(255, 255, 255,
-                        255), // Change this to your desired border color
+                    color: const Color.fromARGB(255, 251, 247,
+                        241), // Change this to your desired border color
                     width: 0, // Change this to your desired border width
                   ),
                 ),
@@ -1156,12 +1253,11 @@ class _QuickLinkContainerState extends State<QuickLinkContainer> {
     double containerHeight2 = isTablet2 ? 270 : 150;
     double containerWidth2 = isTablet2 ? 270 : 150;
     return Padding(
-       padding: EdgeInsets.all(
-     MediaQuery.of(context).size.shortestSide >= 600
-        ? MediaQuery.of(context).size.width * 0.02// 10% for tablets
-        : MediaQuery.of(context).size.width * 0.02, // 5% for phones
-  ),
-     
+      padding: EdgeInsets.all(
+        MediaQuery.of(context).size.shortestSide >= 600
+            ? MediaQuery.of(context).size.width * 0.02 // 10% for tablets
+            : MediaQuery.of(context).size.width * 0.02, // 5% for phones
+      ),
       child: GestureDetector(
         onTap: () {
           Navigator.push(

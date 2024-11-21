@@ -105,21 +105,21 @@ class _UserListViewState extends State<UserListView> {
             return Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(0),
-                  child: SizedBox(
-                    width: 50,
-                    height: 50,
-                    child: Image.asset(
-                      'assets/images/logo9.png',
-                      width: 42,
-                      height: 42,
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.045,
-                ),
+                // Padding(
+                //   padding: const EdgeInsets.all(0),
+                //   child: SizedBox(
+                //     width: 50,
+                //     height: 50,
+                //     child: Image.asset(
+                //       'assets/images/logo9.png',
+                //       width: 42,
+                //       height: 42,
+                //     ),
+                //   ),
+                // ),
+                // SizedBox(
+                //   width: MediaQuery.of(context).size.width * 0.045,
+                // ),
                 Text(
                   "SriBalajiJewelers",
                   style: GoogleFonts.mateSc(
@@ -140,9 +140,9 @@ class _UserListViewState extends State<UserListView> {
                       ).createShader(const Rect.fromLTWH(0.0, 0.0, 200.0, 30.0)),
                   ),
                 ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.045,
-                ),
+                // SizedBox(
+                //   width: MediaQuery.of(context).size.width * 0.045,
+                // ),
               ],
             );
           },

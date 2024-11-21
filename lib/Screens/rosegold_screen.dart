@@ -237,8 +237,8 @@ class _RoseGoldScreenState extends State<RoseGoldScreen> {
                                     image: AssetImage(
                                       'assets/images/RoseGold${index + 1}.png',
                                     ),
-                                    onError: (_, __) => const AssetImage(
-                                        'assets/images/default.png'),
+                                    // onError: (_, __) => const AssetImage(
+                                    //     'assets/images/default.png'),
                                     fit: BoxFit.contain,
                                   ),
                                   border: Border.all(

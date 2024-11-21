@@ -82,7 +82,7 @@ class _TabsScreenState extends State<TabsScreen>
             ],
           ),
           Positioned(
-            bottom: displayHeight * 0.01,
+            bottom: displayHeight * 0.0,
             left: displayWidth * 0.05,
             right: displayWidth * 0.05,
             child: Padding(
