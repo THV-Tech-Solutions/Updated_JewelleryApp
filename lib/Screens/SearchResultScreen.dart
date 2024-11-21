@@ -365,12 +365,13 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           future: _getImageUrlFromReference(documentReference),
           builder: (context, snapshot) {
             if (snapshot.connectionState != ConnectionState.done) {
+              // Show shimmer while loading
               return Shimmer.fromColors(
                 baseColor: Colors.grey[300]!,
                 highlightColor: Colors.grey[100]!,
                 child: Container(
                   width: double.infinity,
-                  height: 200,
+                  height: 200, // Adjust the height as needed
                   color: Colors.white,
                 ),
               );
@@ -398,13 +399,13 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 decoration: BoxDecoration(
                   border: isMainImage
                       ? Border.all(
-                          color: Colors.red, // Set the unique border color
-                          width: 1.5, // Set the border width
-                        )
+                    color: Colors.red, // Set the unique border color
+                    width: 1.5, // Set the border width
+                  )
                       : null, // No border for non-main images
                   borderRadius: isMainImage
                       ? BorderRadius.circular(
-                          1.5) // Set the border radius based on the border width
+                      1.5) // Set the border radius based on the border width
                       : null, // No border radius for non-main images
                 ),
                 child: Card(
@@ -439,15 +440,17 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                       });
                     },
                     child: SizedBox(
-                      height: 20,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Stack(
                             children: [
                               SizedBox(
-                                height: 180,
-                                width: 190,
+                                height: MediaQuery.of(context).size.height *
+                                    (MediaQuery.of(context).size.width < 600
+                                        ? 0.22
+                                        : 0.2),
+                                width: double.infinity,
                                 child: ClipRRect(
                                   borderRadius: const BorderRadius.only(
                                     topLeft: Radius.circular(8.0),
@@ -458,16 +461,19 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                                     fit: BoxFit.cover,
                                     placeholder: (context, url) =>
                                         Shimmer.fromColors(
-                                      baseColor: Colors.grey[300]!,
-                                      highlightColor: Colors.grey[100]!,
-                                      child: Container(
-                                        width: double.infinity,
-                                        height: double.infinity,
-                                        color: Colors.white,
-                                      ),
-                                    ),
+                                          baseColor: const Color.fromARGB(
+                                              113, 0, 0, 0),
+                                          highlightColor: const Color.fromARGB(
+                                              255, 58, 33, 12),
+                                          child: Container(
+                                            width: double.infinity,
+                                            height: double.infinity,
+                                            color: const Color.fromARGB(
+                                                255, 0, 0, 0),
+                                          ),
+                                        ),
                                     errorWidget: (context, url, error) =>
-                                        const Icon(Icons.delete),
+                                    const Icon(Icons.error),
                                   ),
                                 ),
                               ),
@@ -483,34 +489,41 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                                 ),
                             ],
                           ),
-                          const SizedBox(
-                            height: 5,
-                          ),
+                          const SizedBox(height: 5),
                           Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 10),
+                            margin:
+                            const EdgeInsets.symmetric(horizontal: 10),
                             child: Column(
                               children: [
                                 Text(
                                   "Weight : $weight",
-                                  style: const TextStyle(
+                                  style: TextStyle(
+                                    color:
+                                    Color.fromARGB(172, 255, 255, 255),
                                     fontWeight: FontWeight.w700,
+                                    fontSize:
+                                    MediaQuery.of(context).size.width <
+                                        600
+                                        ? 14
+                                        : 18,
                                   ),
                                 ),
                                 Row(
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       'Id : $id',
                                       style: const TextStyle(
                                         fontWeight: FontWeight.w700,
-                                        color: Colors.black,
+                                        color: Color.fromARGB(
+                                            173, 255, 255, 255),
                                       ),
                                     ),
                                     IconButton(
                                       onPressed: () {
-                                        toggleWishlist(
-                                            imageUrl, id, weight.toString());
+                                        toggleWishlist(imageUrl, id,
+                                            weight.toString());
                                       },
                                       icon: Icon(
                                         isInWish
@@ -519,7 +532,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                                         size: 30,
                                         color: isInWish
                                             ? Colors.red
-                                            : Colors.black,
+                                            : const Color.fromARGB(
+                                            255, 255, 255, 255),
                                       ),
                                     ),
                                   ],

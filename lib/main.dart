@@ -9,7 +9,7 @@ import 'package:jewellery/Login_Screens/user_check.dart';
 import 'package:jewellery/Login_Screens/welcome_screen.dart';
 import 'package:jewellery/Screens/tabs.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 
 
 void main() async {
@@ -23,9 +23,9 @@ void main() async {
       projectId: "balaji-jewellers-d4735",
     ),
   );
-  // await FirebaseAppCheck.instance.activate(
-  //   androidProvider: AndroidProvider.playIntegrity,
-  // );
+  await FirebaseAppCheck.instance.activate(
+    androidProvider: AndroidProvider.playIntegrity,
+  );
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final String? userPhoneNumber = prefs.getString('userPhoneNumber');
 
